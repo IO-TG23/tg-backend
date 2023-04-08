@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TG.Backend.Filters;
 
 namespace TG.Backend.Controllers
 {
@@ -55,6 +56,7 @@ namespace TG.Backend.Controllers
         }
 
         [HttpPost("resetPassword")]
+        [ServiceFilter(typeof(ValidateAccountNotLockedFilter))]
         public async Task<IActionResult> ResetPassword([FromBody] AppUserResetPasswordDTO appUser)
         {
             AuthResponseModel resp = await _mediator.Send(new ResetPasswordCommand(appUser));
@@ -68,6 +70,7 @@ namespace TG.Backend.Controllers
         }
 
         [HttpPost("changePassword")]
+        [ServiceFilter(typeof(ValidateAccountNotLockedFilter))]
         public async Task<IActionResult> ChangePassword([FromBody] AppUserChangePasswordDTO appUser)
         {
             AuthResponseModel resp = await _mediator.Send(new ChangePasswordCommand(appUser));
@@ -81,7 +84,7 @@ namespace TG.Backend.Controllers
         }
 
         [HttpPost("confirmAccount")]
-        public async Task<IActionResult> ConfirmaAccount([FromBody] AppUserConfirmAccountDTO appUser)
+        public async Task<IActionResult> ConfirmAccount([FromBody] AppUserConfirmAccountDTO appUser)
         {
             AuthResponseModel resp = await _mediator.Send(new ConfirmAccountCommand(appUser.Token, appUser.Email));
 

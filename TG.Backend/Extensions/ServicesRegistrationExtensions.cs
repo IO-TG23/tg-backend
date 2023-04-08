@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TG.Backend.Email;
 using TG.Backend.Features.Behaviours;
+using TG.Backend.Filters;
 using TG.Backend.Services;
 
 namespace TG.Backend.Extensions
@@ -54,6 +55,8 @@ namespace TG.Backend.Extensions
             });
 
             services.AddAuthorization();
+
+            services.AddScoped<ValidateAccountNotLockedFilter>();
 
             #endregion auth
 

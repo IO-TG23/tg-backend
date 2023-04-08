@@ -1,6 +1,6 @@
 ﻿namespace TG.Backend.Models.Auth
 {
-    public class AppUserChangePasswordDTO
+    public class AppUserChangePasswordDTO : IAppUserDTO
     {
         public string Email { get; set; }
         public string NewPassword { get; set; }
