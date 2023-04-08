@@ -2,8 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using System.Net;
-using TG.Backend.Features.Command;
 
 namespace TG.Backend.Features.Handler
 {
@@ -26,6 +24,8 @@ namespace TG.Backend.Features.Handler
         public async Task<AuthResponseModel> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             AppUser user = _mapper.Map<AppUser>(request.AppUser);
+
+            user.UserName = request.AppUser.Email;
 
             IdentityResult res = await _userManager.CreateAsync(user, request.AppUser.Password);
 

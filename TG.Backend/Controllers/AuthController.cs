@@ -26,5 +26,18 @@ namespace TG.Backend.Controllers
                 _ => BadRequest()
             };
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] AppUserLoginDTO appUser)
+        {
+            AuthResponseModel resp = await _mediator.Send(new LoginUserCommand(appUser));
+
+            return resp switch
+            {
+                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(resp.Messages),
+                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(resp.Messages.FirstOrDefault()),
+                _ => BadRequest()
+            };
+        }
     }
 }

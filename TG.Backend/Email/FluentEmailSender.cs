@@ -19,12 +19,12 @@ namespace TG.Backend.Email
                 Credentials = new NetworkCredential(email, configuration["Mailing:Password"])
             });
 
-            Email.DefaultSender = sender;
+            FluentEmail.Core.Email.DefaultSender = sender;
         }
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            await Email.From(email).Subject(subject).Body(htmlMessage).SendAsync();
+            await FluentEmail.Core.Email.From(email).Subject(subject).Body(htmlMessage).SendAsync();
         }
     }
 }
