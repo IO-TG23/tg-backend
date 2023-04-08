@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -11,6 +9,9 @@ using TG.Backend.Services;
 
 namespace TG.Backend.Extensions
 {
+    /// <summary>
+    /// Rejestracja wszystkich serwisow - wyodrebniona - lepsza czytelnosc
+    /// </summary>
     public static class ServicesRegistrationExtensions
     {
         public static void ConfigureServices(this WebApplicationBuilder builder)

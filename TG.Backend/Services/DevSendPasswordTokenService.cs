@@ -1,5 +1,8 @@
 ﻿namespace TG.Backend.Services
 {
+    /// <summary>
+    /// Dev-owa implementacja serwisu wysylajacego token do resetowania hasla
+    /// </summary>
     public class DevSendPasswordTokenService : ISendPasswordTokenService
     {
         private readonly ILogger<DevSendPasswordTokenService> _logger;

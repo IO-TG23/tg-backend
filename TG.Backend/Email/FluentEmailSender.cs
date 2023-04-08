@@ -4,6 +4,9 @@ using System.Net.Mail;
 
 namespace TG.Backend.Email
 {
+    /// <summary>
+    /// Produkcyjna implementacja email sendera - wykorzystuje EmailSender
+    /// </summary>
     public class FluentEmailSender : IEmailSender
     {
         private readonly string email;

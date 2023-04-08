@@ -2,6 +2,9 @@
 
 namespace TG.Backend.Email
 {
+    /// <summary>
+    /// DEV-owa implementacja EmailSendera, wypisuje informacje na konsole (tylko w srodowisku DEV)
+    /// </summary>
     public class DevEmailSender : IEmailSender
     {
         private readonly ILogger<DevEmailSender> _logger;

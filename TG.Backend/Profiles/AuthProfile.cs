@@ -2,6 +2,9 @@
 
 namespace TG.Backend.Profiles
 {
+    /// <summary>
+    /// Profil dla modeli powiazanych z Auth
+    /// </summary>
     public class AuthProfile : Profile
     {
         public AuthProfile()

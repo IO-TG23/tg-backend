@@ -1,5 +1,8 @@
 ﻿namespace TG.Backend.Extensions
 {
+    /// <summary>
+    /// Implementacja automatycznego aplikowania migracji (nie ma potrzeby robienia Update-Database)
+    /// </summary>
     public static class MigrateEfCoreOnAppBuildExtensions
     {
         public static async Task MigrateEfCoreOnAppBuild(this IServiceProvider serviceProvider)
