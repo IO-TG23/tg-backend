@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
-using TG.Backend.Services;
+﻿using TG.Backend.Services;
 
 namespace TG.Backend.Features.Handler
 {

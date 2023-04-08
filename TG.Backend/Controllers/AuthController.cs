@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TG.Backend.Controllers
@@ -72,6 +71,19 @@ namespace TG.Backend.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] AppUserChangePasswordDTO appUser)
         {
             AuthResponseModel resp = await _mediator.Send(new ChangePasswordCommand(appUser));
+
+            return resp switch
+            {
+                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
+                _ => BadRequest()
+            };
+        }
+
+        [HttpPost("confirmAccount")]
+        public async Task<IActionResult> ConfirmaAccount([FromBody] AppUserConfirmAccountDTO appUser)
+        {
+            AuthResponseModel resp = await _mediator.Send(new ConfirmAccountCommand(appUser.Token, appUser.Email));
 
             return resp switch
             {

@@ -1,7 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
-
-namespace TG.Backend.Features.Handler
+﻿namespace TG.Backend.Features.Handler
 {
     public class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand, AuthResponseModel>
     {

@@ -1,30 +1,21 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace TG.Backend.Email
 {
     public class DevEmailSender : IEmailSender
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly ILogger<DevEmailSender> _logger;
 
-        public DevEmailSender(UserManager<AppUser> userManager)
+        public DevEmailSender(ILogger<DevEmailSender> logger)
         {
-            _userManager = userManager;
+            _logger = logger;
         }
 
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            if (subject.StartsWith("Potwierd"))
-            {
-                AppUser user = await _userManager.FindByEmailAsync(email);
+            _logger.LogInformation("Subject: {subject} for {email}\nContent: {message}", subject, email, htmlMessage);
 
-                if (user is not null)
-                {
-                    user.EmailConfirmed = true;
-
-                    await _userManager.UpdateAsync(user);
-                }
-            }
+            return Task.CompletedTask;
         }
     }
 }

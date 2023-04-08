@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace TG.Backend.Features.Handler

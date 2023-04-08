@@ -1,17 +1,19 @@
 ﻿namespace TG.Backend.Features.Handler
 {
-    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, AuthResponseModel>
+    public class ConfirmAccountHandler : IRequestHandler<ConfirmAccountCommand, AuthResponseModel>
     {
         private readonly UserManager<AppUser> _userManager;
 
-        public DeleteUserHandler(UserManager<AppUser> userManager)
+        public ConfirmAccountHandler(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
         }
 
-        public async Task<AuthResponseModel> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<AuthResponseModel> Handle(ConfirmAccountCommand request, CancellationToken cancellationToken)
         {
-            AppUser user = await _userManager.FindByEmailAsync(request.AppUser.Email);
+            (string token, string email) = request;
+
+            AppUser user = await _userManager.FindByEmailAsync(email);
 
             if (user is null)
             {
@@ -23,7 +25,7 @@
                 };
             }
 
-            IdentityResult res = await _userManager.DeleteAsync(user);
+            IdentityResult res = await _userManager.ConfirmEmailAsync(user, token);
 
             if (!res.Succeeded)
             {
@@ -39,7 +41,7 @@
             {
                 IsSuccess = true,
                 StatusCode = HttpStatusCode.NoContent,
-                Messages = new[] { $"User successfully deleted" }
+                Messages = new string[] { }
             };
         }
     }
