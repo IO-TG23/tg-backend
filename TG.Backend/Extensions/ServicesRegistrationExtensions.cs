@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TG.Backend.Email;
 using TG.Backend.Features.Behaviours;
+using TG.Backend.Services;
 
 namespace TG.Backend.Extensions
 {
@@ -67,10 +68,15 @@ namespace TG.Backend.Extensions
             if (builder.Environment.IsDevelopment())
             {
                 services.AddScoped<IEmailSender, DevEmailSender>();
+                services.AddScoped<ISendPasswordTokenService, DevSendPasswordTokenService>();
             }
             else
             {
                 services.AddScoped<IEmailSender, FluentEmailSender>();
+
+                //IMPORTANT!! TO DELETE LATER ONE - WHEN PROPER SEND TOKEN SERVICE 
+                services.AddScoped<ISendPasswordTokenService, DevSendPasswordTokenService>();
+
             }
 
             #endregion
