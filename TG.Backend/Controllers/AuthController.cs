@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TG.Backend.Controllers
@@ -21,8 +22,8 @@ namespace TG.Backend.Controllers
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(resp.Messages),
-                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(resp.Messages.FirstOrDefault()),
+                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new { Message = resp.Messages.FirstOrDefault() }),
                 _ => BadRequest()
             };
         }
@@ -34,8 +35,22 @@ namespace TG.Backend.Controllers
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(resp.Messages),
-                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(resp.Messages.FirstOrDefault()),
+                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new { Message = resp.Messages.FirstOrDefault() }),
+                _ => BadRequest()
+            };
+        }
+
+        [HttpDelete("delete")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<IActionResult> Delete([FromBody] AppUserDeleteDTO appUser)
+        {
+            AuthResponseModel resp = await _mediator.Send(new DeleteUserCommand(appUser));
+
+            return resp switch
+            {
+                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => Ok(new { Message = resp.Messages.FirstOrDefault() }),
                 _ => BadRequest()
             };
         }

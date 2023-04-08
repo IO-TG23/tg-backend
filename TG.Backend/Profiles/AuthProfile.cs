@@ -8,6 +8,7 @@ namespace TG.Backend.Profiles
         {
             CreateMap<AppUserRegisterDTO, AppUser>();
             CreateMap<AppUserLoginDTO, AppUser>();
+            CreateMap<AppUserDeleteDTO, AppUser>();
         }
     }
 }
