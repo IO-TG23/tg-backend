@@ -55,10 +55,23 @@ namespace TG.Backend.Controllers
             };
         }
 
-        [HttpPost("reset-password")]
+        [HttpPost("resetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] AppUserResetPasswordDTO appUser)
         {
             AuthResponseModel resp = await _mediator.Send(new ResetPasswordCommand(appUser));
+
+            return resp switch
+            {
+                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
+                _ => BadRequest()
+            };
+        }
+
+        [HttpPost("changePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] AppUserChangePasswordDTO appUser)
+        {
+            AuthResponseModel resp = await _mediator.Send(new ChangePasswordCommand(appUser));
 
             return resp switch
             {
