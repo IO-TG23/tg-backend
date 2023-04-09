@@ -85,6 +85,16 @@ namespace TG.Backend.Extensions
 
             #endregion
 
+            #region cors
+            services.AddCors(opts =>
+            {
+                opts.AddPolicy("AllowAnyone", policyOpts =>
+                {
+                    policyOpts.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                });
+            });
+            #endregion
+
             #region aspnet
             services.AddControllers();
             services.AddEndpointsApiExplorer();

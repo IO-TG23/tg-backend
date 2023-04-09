@@ -14,7 +14,7 @@ if (app.Environment.IsDevelopment())
 }
 
 await app.Services.MigrateEfCoreOnAppBuild();
-
+app.UseCors("AllowAnyone");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
