@@ -6,6 +6,8 @@ using System.Text;
 using TG.Backend.Email;
 using TG.Backend.Features.Behaviours;
 using TG.Backend.Filters;
+using TG.Backend.Middlewares;
+using TG.Backend.Repositories.Vehicle;
 using TG.Backend.Services;
 
 namespace TG.Backend.Extensions
@@ -68,6 +70,7 @@ namespace TG.Backend.Extensions
 
             #region services-and-repositories
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
 
             if (builder.Environment.IsDevelopment())
             {
@@ -93,6 +96,10 @@ namespace TG.Backend.Extensions
                     policyOpts.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
                 });
             });
+            #endregion
+            
+            #region middlewares
+            services.AddScoped<ErrorHandlingMiddleware>();
             #endregion
 
             #region aspnet

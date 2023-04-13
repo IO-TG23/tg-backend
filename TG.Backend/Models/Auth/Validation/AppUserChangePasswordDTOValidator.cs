@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace TG.Backend.Data.Validation
+namespace TG.Backend.Models.Auth.Validation
 {
     public class AppUserChangePasswordDTOValidator : AbstractValidator<AppUserChangePasswordDTO>
     {
