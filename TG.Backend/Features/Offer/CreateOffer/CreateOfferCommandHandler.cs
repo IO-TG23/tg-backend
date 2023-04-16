@@ -1,9 +1,10 @@
 using AutoMapper;
+using TG.Backend.Models.Offer;
 using TG.Backend.Repositories.Offer;
 
 namespace TG.Backend.Features.Offer.CreateOffer;
 
-public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, OfferResponse>
+public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, OffersResponse>
 {
     private readonly IOfferRepository _offerRepository;
     private readonly IMapper _mapper;
@@ -14,7 +15,7 @@ public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, Off
         _mapper = mapper;
     }
 
-    public async Task<OfferResponse> Handle(CreateOfferCommand request, CancellationToken cancellationToken)
+    public async Task<OffersResponse> Handle(CreateOfferCommand request, CancellationToken cancellationToken)
     {
         var offer = new Data.Offer
         {
@@ -27,7 +28,7 @@ public class CreateOfferCommandHandler : IRequestHandler<CreateOfferCommand, Off
 
         await _offerRepository.CreateOfferAsync(offer);
 
-        return new OfferResponse
+        return new OffersResponse
         {
             IsSuccess = true,
             StatusCode = HttpStatusCode.NoContent

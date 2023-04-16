@@ -4,7 +4,7 @@ using TG.Backend.Repositories.Offer;
 
 namespace TG.Backend.Features.Offer.GetOffers;
 
-public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OfferResponse>
+public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OffersResponse>
 {
     private readonly IOfferRepository _offerRepository;
     private readonly IMapper _mapper;
@@ -15,7 +15,7 @@ public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OfferRespon
         _mapper = mapper;
     }
 
-    public async Task<OfferResponse> Handle(GetOffersQuery request, CancellationToken cancellationToken)
+    public async Task<OffersResponse> Handle(GetOffersQuery request, CancellationToken cancellationToken)
     {
         var offers = (await _offerRepository.GetOffersAsync(request.Filter))
             .Select(o => new GetOfferDTO
@@ -25,7 +25,7 @@ public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OfferRespon
                 VehicleName = o.Vehicle.Name
             });
 
-        return new OfferResponse
+        return new OffersResponse
         {
             IsSuccess = true,
             StatusCode = HttpStatusCode.OK,

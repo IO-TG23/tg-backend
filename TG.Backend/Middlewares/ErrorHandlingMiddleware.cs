@@ -1,4 +1,5 @@
 using FluentValidation;
+using TG.Backend.Exceptions;
 
 namespace TG.Backend.Middlewares;
 
@@ -9,6 +10,11 @@ public class ErrorHandlingMiddleware : IMiddleware
         try
         {
             await next.Invoke(context);
+        }
+        catch (OfferNotFoundException offerNotFoundException)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsync($"Offer with Id = ${offerNotFoundException.Id} was not found");
         }
         catch (ValidationException validationException)
         {
