@@ -12,12 +12,12 @@ public class ErrorHandlingMiddleware : IMiddleware
         }
         catch (ValidationException validationException)
         {
-            context.Response.StatusCode = 400;
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsJsonAsync(validationException.Errors);
         }
         catch (Exception exception)
         {
-            context.Response.StatusCode = 503;
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
             await context.Response.WriteAsync(exception.Message);
         }
     }
