@@ -7,4 +7,5 @@ public class Offer : Entity
     public required string ContactEmail { get; set; }
     public required string ContactPhoneNumber { get; set; }
     public Vehicle Vehicle { get; set; } = null!;
+    public Guid VehicleId { get; set; }
 }

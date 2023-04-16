@@ -154,6 +154,39 @@ namespace TG.Backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TG.Backend.Data.Offer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContactPhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(14, 2)
+                        .HasColumnType("numeric(14,2)");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId")
+                        .IsUnique();
+
+                    b.ToTable("Offers");
+                });
+
             modelBuilder.Entity("TG.Backend.Data.Vehicle", b =>
                 {
                     b.Property<Guid>("Id")
@@ -165,6 +198,10 @@ namespace TG.Backend.Migrations
 
                     b.Property<decimal>("BootCapacity")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("Drive")
                         .HasColumnType("integer");
@@ -320,6 +357,23 @@ namespace TG.Backend.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TG.Backend.Data.Offer", b =>
+                {
+                    b.HasOne("TG.Backend.Data.Vehicle", "Vehicle")
+                        .WithOne("Offer")
+                        .HasForeignKey("TG.Backend.Data.Offer", "VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("TG.Backend.Data.Vehicle", b =>
+                {
+                    b.Navigation("Offer")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

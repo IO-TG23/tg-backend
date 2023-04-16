@@ -1,4 +1,5 @@
 using AutoMapper;
+using TG.Backend.Helpers;
 
 namespace TG.Backend.Profiles;
 
@@ -14,8 +15,8 @@ public class VehicleProfile : Profile
 
         CreateMap<VehicleDTO, Vehicle>()
             .ForMember(v => v.Gearbox,
-                c => c.MapFrom(vehicle => Enum.Parse<Gearbox>(vehicle.Gearbox)))
+                c => c.MapFrom(vehicle => vehicle.Gearbox.GetGearbox()))
             .ForMember(v => v.Drive,
-                c => c.MapFrom(vehicle => Enum.Parse<Drive>(vehicle.Drive)));
+                c => c.MapFrom(vehicle => vehicle.Drive.GetDrive()));
     }
 }

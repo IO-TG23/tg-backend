@@ -1,9 +1,8 @@
 using AutoMapper;
-using TG.Backend.Features.Offer.GetOffers;
 using TG.Backend.Models.Offer;
 using TG.Backend.Repositories.Offer;
 
-namespace TG.Backend.Features.Vehicle.GetVehicles;
+namespace TG.Backend.Features.Offer.GetOffers;
 
 public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OfferResponse>
 {
@@ -18,7 +17,7 @@ public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OfferRespon
 
     public async Task<OfferResponse> Handle(GetOffersQuery request, CancellationToken cancellationToken)
     {
-        var offers = (await _offerRepository.GetOffersAsync())
+        var offers = (await _offerRepository.GetOffersAsync(request.Filter))
             .Select(o => new GetOfferDTO
             {
                 Id = o.Id,

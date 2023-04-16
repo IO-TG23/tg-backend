@@ -3,6 +3,7 @@ namespace TG.Backend.Models.Vehicle;
 public class VehicleDTO
 {
     public required string Name { get; set; }
+    public required string Description { get; set; }
     public required int ProductionStartYear { get; set; }
     public int? ProductionEndYear { get; set; }
     public required int NumberOfDoors { get; set; }

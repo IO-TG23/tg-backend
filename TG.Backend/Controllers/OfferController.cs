@@ -2,14 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TG.Backend.Features.Offer.CreateOffer;
 using TG.Backend.Features.Offer.GetOffers;
-using TG.Backend.Features.Vehicle.GetVehicles;
 using TG.Backend.Models.Offer;
 
 namespace TG.Backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class OfferController : ControllerBase
 {
     private readonly ISender _sender;
@@ -20,9 +18,9 @@ public class OfferController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetOffers()
+    public async Task<IActionResult> GetOffers([FromQuery] GetOffersFilterDTO filter)
     {
-        var getOffersResponse = await _sender.Send(new GetOffersQuery());
+        var getOffersResponse = await _sender.Send(new GetOffersQuery(filter));
 
         if (getOffersResponse is { IsSuccess: true, StatusCode: HttpStatusCode.OK })
             return Ok(getOffersResponse.Offers);
@@ -30,8 +28,15 @@ public class OfferController : ControllerBase
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 
+    [HttpGet("{id:Guid}")]
+    public async Task<IActionResult> GetOfferById([FromRoute] Guid id)
+    {
+        
+    }
+
     [HttpPost]
-    public async Task<IActionResult> CreateOffer([FromBody]CreateOfferDTO createOfferDto)
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> CreateOffer([FromBody] CreateOfferDTO createOfferDto)
     {
         var createOfferResponse = await _sender.Send(new CreateOfferCommand(createOfferDto));
 

@@ -21,6 +21,8 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .IsRequired();
 
         builder.HasOne(o => o.Vehicle)
-            .WithOne(v => v.Offer);
+            .WithOne(v => v.Offer)
+            .HasForeignKey<Offer>(o => o.VehicleId);
+
     }
 }
