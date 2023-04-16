@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build_env
 WORKDIR /app
 
-COPY *.csproj .
+COPY /TG.Backend/*.csproj .
 RUN dotnet restore
 
 COPY . .
