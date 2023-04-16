@@ -1,6 +1,8 @@
+using TG.Backend.Models.Offer;
+
 namespace TG.Backend.Models.Vehicle;
 
-public class VehicleResponse : ResponseModel
+public class OfferResponse : ResponseModel
 {
-    public IEnumerable<VehicleDTO>? Vehicles { get; set; }
+    public IEnumerable<GetOfferDTO>? Offers { get; set; }
 }

@@ -46,5 +46,8 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 
         builder.Property(v => v.Drive)
             .IsRequired();
+
+        builder.Property(v => v.Description)
+            .IsRequired();
     }
 }

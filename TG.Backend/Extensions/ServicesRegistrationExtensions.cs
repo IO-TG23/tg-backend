@@ -7,7 +7,7 @@ using TG.Backend.Email;
 using TG.Backend.Features.Behaviours;
 using TG.Backend.Filters;
 using TG.Backend.Middlewares;
-using TG.Backend.Repositories.Vehicle;
+using TG.Backend.Repositories.Offer;
 using TG.Backend.Services;
 
 namespace TG.Backend.Extensions
@@ -70,7 +70,7 @@ namespace TG.Backend.Extensions
 
             #region services-and-repositories
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-            services.AddScoped<IVehicleRepository, VehicleRepository>();
+            services.AddScoped<IOfferRepository, OfferRepository>();
 
             if (builder.Environment.IsDevelopment())
             {

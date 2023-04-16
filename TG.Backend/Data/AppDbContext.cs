@@ -8,6 +8,7 @@ namespace TG.Backend.Data
     public class AppDbContext : IdentityDbContext<AppUser>
     {
         public DbSet<Vehicle> Vehicles => Set<Vehicle>();
+        public DbSet<Offer> Offers => Set<Offer>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

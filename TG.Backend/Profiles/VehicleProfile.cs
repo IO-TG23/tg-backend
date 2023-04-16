@@ -16,6 +16,6 @@ public class VehicleProfile : Profile
             .ForMember(v => v.Gearbox,
                 c => c.MapFrom(vehicle => Enum.Parse<Gearbox>(vehicle.Gearbox)))
             .ForMember(v => v.Drive,
-                c => c.MapFrom(vehicle => Enum.Parse<Drive>(vehicle.Drive)));;
+                c => c.MapFrom(vehicle => Enum.Parse<Drive>(vehicle.Drive)));
     }
 }

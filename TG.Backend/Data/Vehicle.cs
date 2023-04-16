@@ -3,6 +3,7 @@ namespace TG.Backend.Data;
 public sealed class Vehicle : Entity
 {
     public required string Name { get; set; }
+    public required string Description { get; set; }
     public required int ProductionStartYear { get; set; }
     public int? ProductionEndYear { get; set; }
     public required int NumberOfDoors { get; set; }
@@ -16,4 +17,5 @@ public sealed class Vehicle : Entity
     public required decimal FrontWheelTrack { get; set; }
     public required Gearbox Gearbox { get; set; }
     public required Drive Drive { get; set; }
+    public Offer Offer { get; set; } = null!;
 }

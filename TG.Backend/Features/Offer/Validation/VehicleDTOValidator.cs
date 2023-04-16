@@ -1,83 +1,83 @@
 using FluentValidation;
-using TG.Backend.Features.Vehicle.CreateVehicle;
+using TG.Backend.Features.Offer.CreateOffer;
 
-namespace TG.Backend.Models.Vehicle.Validation;
+namespace TG.Backend.Features.Offer.Validation;
 
-public class VehicleDTOValidator : AbstractValidator<CreateVehicleCommand>
+public class VehicleDTOValidator : AbstractValidator<CreateOfferCommand>
 {
     public VehicleDTOValidator()
     {
-        RuleFor(v => v.VehicleDto.Name)
+        RuleFor(v => v.CreateOfferDto.Vehicle.Name)
             .NotEmpty()
             .WithMessage("Name of vehicle cannot be empty!");
 
-        RuleFor(v => v.VehicleDto.ProductionStartYear)
+        RuleFor(v => v.CreateOfferDto.Vehicle.ProductionStartYear)
             .NotEmpty()
             .WithMessage("Product start year cannot be empty!")
             .GreaterThanOrEqualTo(1900)
             .WithMessage("Production start year must be greater or equal to 1900!");
 
-        RuleFor(v => v.VehicleDto.ProductionEndYear)
+        RuleFor(v => v.CreateOfferDto.Vehicle.ProductionEndYear)
             .Must(BeValidProductionEndYear)
             .WithMessage("Production end year must be empty or greater than 1900!")
-            .GreaterThanOrEqualTo(command => command.VehicleDto.ProductionStartYear)
+            .GreaterThanOrEqualTo(command => command.CreateOfferDto.Vehicle.ProductionStartYear)
             .WithMessage("Production end year must be greater or equal to production start year!");
 
-        RuleFor(v => v.VehicleDto.NumberOfDoors)
+        RuleFor(v => v.CreateOfferDto.Vehicle.NumberOfDoors)
             .NotEmpty()
             .WithMessage("Number of doors  cannot be empty!");
 
-        RuleFor(v => v.VehicleDto.NumberOfSeats)
+        RuleFor(v => v.CreateOfferDto.Vehicle.NumberOfSeats)
             .NotEmpty()
             .WithMessage("Number of seats cannot be empty!");
 
-        RuleFor(v => v.VehicleDto.BootCapacity)
+        RuleFor(v => v.CreateOfferDto.Vehicle.BootCapacity)
             .NotEmpty()
             .WithMessage("Boot capacity cannot be empty!");
 
-        RuleFor(v => v.VehicleDto.Length)
+        RuleFor(v => v.CreateOfferDto.Vehicle.Length)
             .NotEmpty()
             .WithMessage("Length of vehicle cannot be empty!")
             .GreaterThan(0)
             .WithMessage("Length of vehicle cannot be negative!");
         
-        RuleFor(v => v.VehicleDto.Height)
+        RuleFor(v => v.CreateOfferDto.Vehicle.Height)
             .NotEmpty()
             .WithMessage("Height of vehicle cannot be empty!")
             .GreaterThan(0)
             .WithMessage("Height of vehicle cannot be negative!");
         
-        RuleFor(v => v.VehicleDto.Width)
+        RuleFor(v => v.CreateOfferDto.Vehicle.Width)
             .NotEmpty()
             .WithMessage("Width of vehicle cannot be empty!")
             .GreaterThan(0)
             .WithMessage("Width of vehicle cannot be negative!");
         
-        RuleFor(v => v.VehicleDto.WheelBase)
+        RuleFor(v => v.CreateOfferDto.Vehicle.WheelBase)
             .NotEmpty()
             .WithMessage("Wheel base of vehicle cannot be empty!")
             .GreaterThan(0)
             .WithMessage("Wheel base of vehicle cannot be negative!");
         
-        RuleFor(v => v.VehicleDto.BackWheelTrack)
+        RuleFor(v => v.CreateOfferDto.Vehicle.BackWheelTrack)
             .NotEmpty()
             .WithMessage("Back wheel track of vehicle cannot be empty!")
             .GreaterThan(0)
             .WithMessage("Back wheel track of vehicle cannot be negative!");
         
-        RuleFor(v => v.VehicleDto.FrontWheelTrack)
+        RuleFor(v => v.CreateOfferDto.Vehicle.FrontWheelTrack)
             .NotEmpty()
             .WithMessage("Front wheel track of vehicle cannot be empty!")
             .GreaterThan(0)
             .WithMessage("Front wheel track of vehicle cannot be negative!");
 
-        RuleFor(v => v.VehicleDto.Gearbox)
+        RuleFor(v => v.CreateOfferDto.Vehicle.Gearbox)
             .NotEmpty()
             .WithMessage("Gearbox cannot be empty!")
             .Must(BeValidGearbox)
             .WithMessage(@"Valid values for gearbox are: ""Automatic"" or ""Manual""!");
         
-        RuleFor(v => v.VehicleDto.Drive)
+        RuleFor(v => v.CreateOfferDto.Vehicle.Drive)
             .NotEmpty()
             .WithMessage("Vehicle drive cannot be empty!")
             .Must(BeValidDrive)
