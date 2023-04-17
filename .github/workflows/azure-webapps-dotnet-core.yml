@@ -21,7 +21,7 @@ name: Build tg-backend and deploy to Azure App Service
 
 env:
   AZURE_WEBAPP_NAME: tg-backend
-  AZURE_WEBAPP_PACKAGE_PATH: 'TG.Backend'
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '7.0.x'                 
 
 on:
