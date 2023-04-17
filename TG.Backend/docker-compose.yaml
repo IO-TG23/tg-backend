@@ -9,7 +9,7 @@ services:
     networks:
       - app_network
   app:
-    image: tg-backend
+    image: iotg23/tg-backend
     pull_policy: if_not_present
     depends_on:
       - db
