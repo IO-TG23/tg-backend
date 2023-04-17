@@ -8,21 +8,21 @@ namespace TG.Backend.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly ISender _sender;
 
-        public AuthController(IMediator mediator)
+        public AuthController(ISender sender)
         {
-            _mediator = mediator;
+            _sender = sender;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] AppUserRegisterDTO appUser)
         {
-            AuthResponseModel resp = await _mediator.Send(new RegisterUserCommand(appUser));
+            AuthResponseModel resp = await _sender.Send(new RegisterUserCommand(appUser));
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
                 { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new { Message = resp.Messages.FirstOrDefault() }),
                 _ => BadRequest()
             };
@@ -31,11 +31,11 @@ namespace TG.Backend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AppUserLoginDTO appUser)
         {
-            AuthResponseModel resp = await _mediator.Send(new LoginUserCommand(appUser));
+            AuthResponseModel resp = await _sender.Send(new LoginUserCommand(appUser));
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
                 { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new { Message = resp.Messages.FirstOrDefault() }),
                 _ => BadRequest()
             };
@@ -45,11 +45,11 @@ namespace TG.Backend.Controllers
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> Delete([FromBody] AppUserDeleteDTO appUser)
         {
-            AuthResponseModel resp = await _mediator.Send(new DeleteUserCommand(appUser));
+            AuthResponseModel resp = await _sender.Send(new DeleteUserCommand(appUser));
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
                 { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
                 _ => BadRequest()
             };
@@ -59,11 +59,11 @@ namespace TG.Backend.Controllers
         [ServiceFilter(typeof(ValidateAccountNotLockedFilter))]
         public async Task<IActionResult> ResetPassword([FromBody] AppUserResetPasswordDTO appUser)
         {
-            AuthResponseModel resp = await _mediator.Send(new ResetPasswordCommand(appUser));
+            AuthResponseModel resp = await _sender.Send(new ResetPasswordCommand(appUser));
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
                 { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
                 _ => BadRequest()
             };
@@ -73,11 +73,11 @@ namespace TG.Backend.Controllers
         [ServiceFilter(typeof(ValidateAccountNotLockedFilter))]
         public async Task<IActionResult> ChangePassword([FromBody] AppUserChangePasswordDTO appUser)
         {
-            AuthResponseModel resp = await _mediator.Send(new ChangePasswordCommand(appUser));
+            AuthResponseModel resp = await _sender.Send(new ChangePasswordCommand(appUser));
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
                 { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
                 _ => BadRequest()
             };
@@ -86,11 +86,11 @@ namespace TG.Backend.Controllers
         [HttpPost("confirmAccount")]
         public async Task<IActionResult> ConfirmAccount([FromBody] AppUserConfirmAccountDTO appUser)
         {
-            AuthResponseModel resp = await _mediator.Send(new ConfirmAccountCommand(appUser.Token, appUser.Email));
+            AuthResponseModel resp = await _sender.Send(new ConfirmAccountCommand(appUser.Token, appUser.Email));
 
             return resp switch
             {
-                { IsSuccess: false, StatusCode: HttpStatusCode.BadRequest } => BadRequest(new { resp.Messages }),
+                { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
                 { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
                 _ => BadRequest()
             };

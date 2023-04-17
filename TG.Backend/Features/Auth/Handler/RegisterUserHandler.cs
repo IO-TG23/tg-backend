@@ -32,7 +32,7 @@ namespace TG.Backend.Features.Handler
                 return new()
                 {
                     IsSuccess = false,
-                    StatusCode = HttpStatusCode.BadRequest,
+                    StatusCode = HttpStatusCode.Unauthorized,
                     Messages = res.Errors.Select(e => e.Description).ToArray()
                 };
             }

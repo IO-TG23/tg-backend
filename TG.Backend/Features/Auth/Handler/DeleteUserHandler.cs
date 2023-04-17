@@ -18,7 +18,7 @@
                 return new()
                 {
                     IsSuccess = false,
-                    StatusCode = HttpStatusCode.BadRequest,
+                    StatusCode = HttpStatusCode.Unauthorized,
                     Messages = new[] { "Provided credentials are invalid" }
                 };
             }
@@ -30,7 +30,7 @@
                 return new()
                 {
                     IsSuccess = false,
-                    StatusCode = HttpStatusCode.BadRequest,
+                    StatusCode = HttpStatusCode.Unauthorized,
                     Messages = res.Errors.Select(e => e.Description).ToArray()
                 };
             }

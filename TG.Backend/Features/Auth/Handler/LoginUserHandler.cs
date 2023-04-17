@@ -30,7 +30,7 @@ namespace TG.Backend.Features.Handler
                 return new()
                 {
                     IsSuccess = false,
-                    StatusCode = HttpStatusCode.BadRequest,
+                    StatusCode = HttpStatusCode.Unauthorized,
                     Messages = new[] { "Provided credentials are invalid" }
                 };
             }
@@ -42,7 +42,7 @@ namespace TG.Backend.Features.Handler
                 return new()
                 {
                     IsSuccess = false,
-                    StatusCode = HttpStatusCode.BadRequest,
+                    StatusCode = HttpStatusCode.Unauthorized,
                     Messages = new[] { "Provided credentials are invalid or user is locked" }
                 };
             }

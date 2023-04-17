@@ -72,7 +72,7 @@ namespace TG.Backend.Extensions
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddScoped<IOfferRepository, OfferRepository>();
 
-            if (builder.Environment.IsDevelopment())
+            if (!builder.Environment.IsProduction())
             {
                 services.AddScoped<IEmailSender, DevEmailSender>();
                 services.AddScoped<ISendPasswordTokenService, DevSendPasswordTokenService>();
