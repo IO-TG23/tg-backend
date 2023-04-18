@@ -11,7 +11,7 @@ Backend systemu wspomagającego pracę komisu sprzedającego tanie pojazdy. Uwzg
 * FluentValidation
 
 ## Instalacja
-Włączając backend możemy również skorzystać z Dockera na przykład Docker Desktop, wówczas konieczne jest wykonanie komendy:
+Włączając backend możemy skorzystać z Dockera na przykład Docker Desktop, wówczas konieczne jest wykonanie komendy:
 
 ```bash
 $ docker compose up
