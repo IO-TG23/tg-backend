@@ -9,6 +9,9 @@ Backend systemu wspomagającego pracę komisu sprzedającego tanie pojazdy. Uwzg
 * ASP.NET Core Identity
 * POSTGRESQL
 * FluentValidation
+* AutoMapper
+* xUnit
+
 
 ## Instalacja
 Włączając backend możemy skorzystać z Dockera na przykład Docker Desktop, wówczas konieczne jest wykonanie komendy:
