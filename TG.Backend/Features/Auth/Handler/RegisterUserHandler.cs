@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Authenticator;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace TG.Backend.Features.Handler
@@ -9,14 +10,18 @@ namespace TG.Backend.Features.Handler
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly IEmailSender _sender;
+        private readonly TwoFactorAuthenticator _authenticator;
+        private readonly IConfiguration _configuration;
 
         public RegisterUserHandler(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager,
-            IMapper mapper, IEmailSender sender)
+            IMapper mapper, IEmailSender sender, TwoFactorAuthenticator authenticator, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _mapper = mapper;
             _sender = sender;
+            _authenticator = authenticator;
+            _configuration = configuration;
         }
 
         public async Task<AuthResponseModel> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -47,11 +52,14 @@ namespace TG.Backend.Features.Handler
             //TODO - wiadomosc mailowa - wyglad
             await _sender.SendEmailAsync(user.Email, "Potwierdz adres email", token);
 
+            SetupCode setupInfo = _authenticator.GenerateSetupCode(_configuration["2FA:Issuer"], user.Email, _configuration["2FA:Key"], false);
+            string qrCode = setupInfo.QrCodeSetupImageUrl;
+
             return new()
             {
                 IsSuccess = true,
                 StatusCode = HttpStatusCode.OK,
-                Messages = new[] { "Account created succesfully" }
+                Messages = new[] { qrCode }
             };
         }
 

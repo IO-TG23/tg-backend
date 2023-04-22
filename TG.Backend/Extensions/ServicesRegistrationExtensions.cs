@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Google.Authenticator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -69,6 +70,7 @@ namespace TG.Backend.Extensions
             #endregion
 
             #region services-and-repositories
+            services.AddSingleton<TwoFactorAuthenticator>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddScoped<IOfferRepository, OfferRepository>();
 
@@ -97,7 +99,7 @@ namespace TG.Backend.Extensions
                 });
             });
             #endregion
-            
+
             #region middlewares
             services.AddScoped<ErrorHandlingMiddleware>();
             #endregion
