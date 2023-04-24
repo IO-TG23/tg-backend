@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Google.Authenticator;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -11,14 +12,17 @@ namespace TG.Backend.Features.Handler
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly TwoFactorAuthenticator _authenticator;
 
         public LoginUserHandler(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+            RoleManager<IdentityRole> roleManager, IConfiguration configuration,
+            TwoFactorAuthenticator authenticator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _authenticator = authenticator;
         }
 
         public async Task<AuthResponseModel> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -36,8 +40,9 @@ namespace TG.Backend.Features.Handler
             }
 
             SignInResult loginRes = await _signInManager.PasswordSignInAsync(user, request.AppUser.Password, false, true);
+            bool valid2FACode = _authenticator.ValidateTwoFactorPIN(_configuration["2FA:Key"], request.AppUser.Code);
 
-            if (!loginRes.Succeeded || loginRes.IsLockedOut)
+            if (!loginRes.Succeeded || loginRes.IsLockedOut || !valid2FACode)
             {
                 return new()
                 {
@@ -46,6 +51,7 @@ namespace TG.Backend.Features.Handler
                     Messages = new[] { "Provided credentials are invalid or user is locked" }
                 };
             }
+
 
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
