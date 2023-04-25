@@ -28,18 +28,6 @@ public class CreateBlobsCommandHandler : IRequestHandler<CreateBlobsCommand, Blo
             await _azureBlobStorageService.UploadBlobAsync(blobId, blobFile);
         }
         
-        // próbowałem w ten sposób ale nie idzie bo ef ma problem z parallel wątkami, moze ty masz pomysl lepszy
-        // var createBlobTasks = request.Blobs.Select(async blobFile => await Task.Run(async () =>
-        //     {
-        //         var blob = new Data.Blob() { Name = blobFile.FileName };
-        //
-        //         var blobId = await _blobRepository.CreateBlobAsync(blob);
-        //         await _azureBlobStorageService.UploadBlobAsync(blobId, blobFile);
-        //     }, cancellationToken))
-        //     .ToList();
-        //
-        // await Task.WhenAll(createBlobTasks);
-
         return new BlobResponse
         {
             IsSuccess = true,

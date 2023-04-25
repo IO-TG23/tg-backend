@@ -34,6 +34,6 @@ public class BlobController : ControllerBase
         if (blobResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
             return NoContent();
 
-        return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        return StatusCode(StatusCodes.Status418ImATeapot);
     }
 }
