@@ -1,4 +1,3 @@
-using AutoMapper;
 using TG.Backend.Models.Offer;
 using TG.Backend.Repositories.Offer;
 
