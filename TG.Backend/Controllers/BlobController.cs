@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TG.Backend.Features.Blob.CreateBlobs;
 using TG.Backend.Features.Blob.GetBlobById;
@@ -26,10 +29,10 @@ public class BlobController : ControllerBase
         return blobResponse.Blob!;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateBlobs([FromForm] IFormFileCollection blobs)
+    [HttpPost("{offerId:Guid}")]
+    public async Task<IActionResult> CreateBlobs([FromForm] IFormFileCollection blobs, [FromRoute] Guid offerId)
     {
-        var blobResponse = await _sender.Send(new CreateBlobsCommand(blobs));
+        var blobResponse = await _sender.Send(new CreateBlobsCommand(blobs, offerId));
 
         if (blobResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
             return NoContent();

@@ -20,6 +20,7 @@ public class OfferRepository : IOfferRepository
         var offers = await _dbContext.Offers
             .AsNoTracking()
             .Include(o => o.Vehicle)
+            .Include(o => o.Blobs)
             .Where(o => filter.Gearbox == null || o.Vehicle.Gearbox == filter.Gearbox.GetGearbox())
             .Where(o => filter.Drive == null || o.Vehicle.Drive == filter.Drive.GetDrive())
             .Where(o => (filter.PriceLow == null || o.Price >= filter.PriceLow) && (filter.PriceHigh == null || o.Price <= filter.PriceHigh))
@@ -41,6 +42,7 @@ public class OfferRepository : IOfferRepository
             return await _dbContext.Offers
                 .AsNoTracking()
                 .Include(o => o.Vehicle)
+                .Include(o => o.Blobs)
                 .FirstOrDefaultAsync(o => o.Id == id);
         
         return await _dbContext.Offers
