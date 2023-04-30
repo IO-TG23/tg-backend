@@ -23,7 +23,8 @@ namespace TG.Backend.Controllers
             return resp switch
             {
                 { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
-                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new { Message = resp.Messages.FirstOrDefault() }),
+                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new
+                    { Message = resp.Messages.FirstOrDefault() }),
                 _ => BadRequest()
             };
         }
@@ -36,7 +37,8 @@ namespace TG.Backend.Controllers
             return resp switch
             {
                 { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
-                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new { Message = resp.Messages.FirstOrDefault() }),
+                { IsSuccess: true, StatusCode: HttpStatusCode.OK } => Ok(new
+                    { Message = resp.Messages.FirstOrDefault() }),
                 _ => BadRequest()
             };
         }

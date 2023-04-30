@@ -43,7 +43,7 @@ public class OfferController : ControllerBase
     }
 
     [HttpPost]
-    //[Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Employee")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Employee")]
     public async Task<IActionResult> CreateOffer([FromBody] CreateOfferDTO createOfferDto)
     {
         var createOfferResponse = await _sender.Send(new CreateOfferCommand(createOfferDto));

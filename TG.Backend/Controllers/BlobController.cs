@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TG.Backend.Features.Blob.CreateBlobs;
 using TG.Backend.Features.Blob.GetBlobById;
