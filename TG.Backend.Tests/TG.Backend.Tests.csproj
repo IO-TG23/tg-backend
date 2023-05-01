@@ -30,4 +30,10 @@
       <ProjectReference Include="..\TG.Backend\TG.Backend.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="testSettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

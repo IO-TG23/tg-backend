@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TG.Backend.Data;
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using TG.Backend.Models.Offer;
 
@@ -19,15 +20,27 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
         _factory = factory
             .WithWebHostBuilder(builder =>
             {
+                builder.ConfigureAppConfiguration((_, config) =>
+                { 
+                    var configuration = new ConfigurationBuilder()
+                        .AddJsonFile("testSettings.json")
+                        .Build();
+ 
+                    config.AddConfiguration(configuration);
+                });
+                
                 builder.ConfigureServices(services =>
                 {
                     var dbContextOptions = services.SingleOrDefault(service =>
                         service.ServiceType == typeof(DbContextOptions<AppDbContext>));
                     if (dbContextOptions is not null)
                         services.Remove(dbContextOptions);
+
+                    var configuration = services.BuildServiceProvider().CreateScope().ServiceProvider
+                        .GetRequiredService<IConfiguration>();
+                    
                     services.AddDbContext<AppDbContext>(op =>
-                        op.UseNpgsql(
-                            "Server=localhost;Port=5432;Database=tg-backend-test;User Id=postgres;Password=password"));
+                        op.UseNpgsql(configuration.GetConnectionString("TestConn")));
                 });
             });
         _client = _factory.CreateClient();
