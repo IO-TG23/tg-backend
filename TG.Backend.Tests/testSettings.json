@@ -1,5 +1,0 @@
-{
-  "ConnectionStrings": {
-    "TestConn": "Server=localhost;Port=5432;Database=tg-backend-test;User Id=postgres;Password=password"
-  }
-}
