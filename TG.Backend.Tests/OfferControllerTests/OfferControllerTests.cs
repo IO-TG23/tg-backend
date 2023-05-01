@@ -1,43 +1,24 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using TG.Backend.Data;
 using FluentAssertions;
-using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
 
 namespace TG.Backend.Tests.OfferControllerTests;
 
-public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
+[Collection("SharedApi")]
+public class OfferControllerTests : IAsyncLifetime
 {
     private readonly HttpClient _client;
-    private readonly WebApplicationFactory<Program> _factory;
-
-    public OfferControllerTests(WebApplicationFactory<Program> factory)
+    private readonly Func<Task> _resetDatabase;
+    private readonly ApiFactory _factory;
+    
+    public OfferControllerTests(ApiFactory apiFactory)
     {
-        _factory = factory
-            .WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureServices(services =>
-                {
-                    var dbContextOptions = services.SingleOrDefault(service =>
-                        service.ServiceType == typeof(DbContextOptions<AppDbContext>));
-                    if (dbContextOptions is not null)
-                        services.Remove(dbContextOptions);
-
-                    var configuration = services.BuildServiceProvider().CreateScope().ServiceProvider
-                        .GetRequiredService<IConfiguration>();
-                    services.AddDbContext<AppDbContext>(op =>
-                        op.UseNpgsql(configuration.GetConnectionString("TestConn")));
-
-                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
-                    services.AddMvc(options => options.Filters.Add(new FakeUserFilter()));
-                });
-            });
-        _client = _factory.CreateClient();
+        _factory = apiFactory;
+        _client = apiFactory.HttpClient;
+        _resetDatabase = apiFactory.ResetDatabaseAsync;
     }
 
     [Theory]
@@ -52,7 +33,7 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
-    
+
     [Theory]
     [InlineData("drive=fwd&gearbox=automatic&priceHigh=20&priceLow=10")]
     [InlineData("drive=rwd&gearbox=manual&priceHigh=20&priceLow=10")]
@@ -72,22 +53,21 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
         // arrange
         var offer = GetValidOffer();
         await Seed(offer);
-        
+
         // act
         var response = await _client.GetAsync($"Offer/{offer.Id}");
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.ContentType!.MediaType.Should().Be("application/json");
     }
-    
+
     [Fact]
     public async Task GetOfferBydId_ForInvalidId_ReturnsNotFoundResult()
     {
-        
         // act
         var response = await _client.GetAsync($"Offer/{Guid.Empty}");
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -122,14 +102,14 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
             ContactPhoneNumber = "123456789"
         };
         var content = offer.ToJsonHttpContent();
-        
+
         // act
         var response = await _client.PostAsync("Offer", content);
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
-    
+
     [Fact]
     public async Task CreateOffer_ForInvalidModel_ReturnsBadRequestResult()
     {
@@ -160,14 +140,14 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
             ContactPhoneNumber = "123456789"
         };
         var content = offer.ToJsonHttpContent();
-        
+
         // act
         var response = await _client.PostAsync("Offer", content);
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
-    
+
     [Fact]
     public async Task DeleteOfferById_ForValidId_ReturnsNoContentResult()
     {
@@ -177,31 +157,21 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
 
         // act
         var response = await _client.DeleteAsync($"Offer/{offer.Id}");
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
-    
+
     [Fact]
     public async Task DeleteOfferBydId_ForInvalidId_ReturnsNotFoundResult()
     {
-        
         // act
         var response = await _client.DeleteAsync($"Offer/{Guid.Empty}");
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
     
-    public void Dispose()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        context.Database.EnsureDeleted();
-        _client.Dispose();
-        _factory.Dispose();
-    }
-
     private async Task Seed(Offer offer)
     {
         using var scope = _factory.Services.CreateScope();
@@ -209,7 +179,7 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
         await context.Offers.AddAsync(offer);
         await context.SaveChangesAsync();
     }
-    
+
     private Offer GetValidOffer()
     {
         return new Offer
@@ -238,4 +208,9 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
             }
         };
     }
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    // clean tables after each test
+    public async Task DisposeAsync() => await _resetDatabase();
 }
