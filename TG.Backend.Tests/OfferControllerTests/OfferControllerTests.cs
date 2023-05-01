@@ -5,15 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using TG.Backend.Data;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using TG.Backend.Models.Offer;
 
 namespace TG.Backend.Tests.OfferControllerTests;
 
 public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
 {
     private readonly HttpClient _client;
-    private WebApplicationFactory<Program> _factory;
+    private readonly WebApplicationFactory<Program> _factory;
 
     public OfferControllerTests(WebApplicationFactory<Program> factory)
     {
@@ -109,6 +107,17 @@ public class OfferControllerTests : IClassFixture<WebApplicationFactory<Program>
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.ContentType!.MediaType.Should().Be("application/json");
+    }
+    
+    [Fact]
+    public async Task GetOfferBydId_ForInvalidId_ReturnsNotFoundResult()
+    {
+        
+        // act
+        var response = await _client.GetAsync($"Offer/{Guid.Empty}");
+        
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
     
     public void Dispose()
