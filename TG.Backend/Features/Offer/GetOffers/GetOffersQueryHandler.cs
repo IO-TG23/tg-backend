@@ -1,4 +1,3 @@
-using AutoMapper;
 using TG.Backend.Models.Offer;
 using TG.Backend.Repositories.Offer;
 
@@ -7,12 +6,10 @@ namespace TG.Backend.Features.Offer.GetOffers;
 public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OffersResponse>
 {
     private readonly IOfferRepository _offerRepository;
-    private readonly IMapper _mapper;
 
-    public GetOffersQueryHandler(IOfferRepository offerRepository, IMapper mapper)
+    public GetOffersQueryHandler(IOfferRepository offerRepository)
     {
         _offerRepository = offerRepository;
-        _mapper = mapper;
     }
 
     public async Task<OffersResponse> Handle(GetOffersQuery request, CancellationToken cancellationToken)
@@ -22,14 +19,15 @@ public class GetOffersQueryHandler : IRequestHandler<GetOffersQuery, OffersRespo
             {
                 Id = o.Id,
                 VehicleDescription = o.Vehicle.Description,
-                VehicleName = o.Vehicle.Name
+                VehicleName = o.Vehicle.Name,
+                BlobIds = o.Blobs.Select(b => b.Id)
             });
 
         return new OffersResponse
         {
             IsSuccess = true,
             StatusCode = HttpStatusCode.OK,
-            Offers = _mapper.Map<IEnumerable<GetOfferDTO>>(offers)
+            Offers = offers
         };
     }
 }

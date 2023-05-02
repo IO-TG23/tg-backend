@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TG.Backend.Data;
@@ -11,9 +12,11 @@ using TG.Backend.Data;
 namespace TG.Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230430191333_CreateRelationBetweenOfferAndBlob")]
+    partial class CreateRelationBetweenOfferAndBlob
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,7 +174,7 @@ namespace TG.Backend.Migrations
 
                     b.HasIndex("OfferId");
 
-                    b.ToTable("Blobs", (string)null);
+                    b.ToTable("Blobs");
                 });
 
             modelBuilder.Entity("TG.Backend.Data.Offer", b =>
@@ -204,7 +207,7 @@ namespace TG.Backend.Migrations
                     b.HasIndex("VehicleId")
                         .IsUnique();
 
-                    b.ToTable("Offers", (string)null);
+                    b.ToTable("Offers");
                 });
 
             modelBuilder.Entity("TG.Backend.Data.Vehicle", b =>
@@ -262,7 +265,7 @@ namespace TG.Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vehicles", (string)null);
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("TG.Backend.Models.Auth.AppUser", b =>

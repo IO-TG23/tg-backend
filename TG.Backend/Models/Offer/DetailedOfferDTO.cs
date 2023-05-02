@@ -19,4 +19,5 @@ public class DetailedOfferDTO
     public required decimal WheelBase { get; set; }
     public required  decimal BackWheelTrack { get; set; }
     public required decimal FrontWheelTrack { get; set; }
+    public IEnumerable<Guid> BlobIds { get; set; } = new List<Guid>();
 }
