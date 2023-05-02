@@ -10,7 +10,13 @@ namespace TG.Backend.Data
         public DbSet<Vehicle> Vehicles => Set<Vehicle>();
         public DbSet<Offer> Offers => Set<Offer>();
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+
+        public AppDbContext()
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
