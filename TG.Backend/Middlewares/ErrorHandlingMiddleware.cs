@@ -11,10 +11,10 @@ public class ErrorHandlingMiddleware : IMiddleware
         {
             await next.Invoke(context);
         }
-        catch (OfferNotFoundException offerNotFoundException)
+        catch (NotFoundException notFoundException)
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
-            await context.Response.WriteAsync($"Offer with Id = ${offerNotFoundException.Id} was not found");
+            await context.Response.WriteAsync($"Content with Id = ${notFoundException.Id} was not found");
         }
         catch (ValidationException validationException)
         {

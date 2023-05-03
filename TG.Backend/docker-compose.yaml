@@ -20,6 +20,8 @@ services:
       - JWT__Audience=value
       - JWT__Key=valuevaluevalue123valuevalue123456789
       - ASPNETCORE_ENVIRONMENT=Development
+      - 2FA__Key=secretkey
+      - 2FA__Issuer=tg-backend
     networks:
       - app_network
 networks:

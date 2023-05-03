@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TG.Backend.Features.Offer.CreateOffer;
 using TG.Backend.Features.Offer.DeleteOffer;
+using TG.Backend.Features.Offer.EditOffer;
 using TG.Backend.Features.Offer.GetOfferById;
 using TG.Backend.Features.Offer.GetOffers;
 using TG.Backend.Models.Offer;
@@ -60,6 +61,17 @@ public class OfferController : ControllerBase
         var deleteOfferResponse = await _sender.Send(new DeleteOfferCommand(id));
 
         if (deleteOfferResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
+            return NoContent();
+
+        return StatusCode(StatusCodes.Status503ServiceUnavailable);
+    }
+
+    [HttpPut("{id:Guid}")]
+    public async Task<IActionResult> EditOffer([FromRoute] Guid id, [FromBody] EditOfferDTO editOfferDto)
+    {
+        var editOfferResponse = await _sender.Send(new EditOfferCommand(editOfferDto, id));
+
+        if (editOfferResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
             return NoContent();
 
         return StatusCode(StatusCodes.Status503ServiceUnavailable);

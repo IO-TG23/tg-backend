@@ -8,4 +8,5 @@ public class Offer : Entity
     public required string ContactPhoneNumber { get; set; }
     public Vehicle Vehicle { get; set; } = null!;
     public Guid VehicleId { get; set; }
+    public ICollection<Blob> Blobs { get; set; } = new List<Blob>();
 }

@@ -24,5 +24,8 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .WithOne(v => v.Offer)
             .HasForeignKey<Offer>(o => o.VehicleId);
 
+        builder.HasMany(o => o.Blobs)
+            .WithOne()
+            .HasForeignKey(b => b.OfferId);
     }
 }

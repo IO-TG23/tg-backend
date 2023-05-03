@@ -1,10 +1,6 @@
 namespace TG.Backend.Exceptions;
 
-public class OfferNotFoundException : Exception
+public class OfferNotFoundException : NotFoundException
 {
-    public Guid Id { get; }
-    public OfferNotFoundException(Guid id)
-    {
-        Id = id;
-    }
+    public OfferNotFoundException(Guid id) : base(id) {}
 }

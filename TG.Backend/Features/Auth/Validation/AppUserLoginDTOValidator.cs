@@ -9,8 +9,11 @@ namespace TG.Backend.Features.Auth.Validation
             RuleFor(x => x.AppUser.Email)
                 .EmailAddress()
                 .NotEmpty();
-            
+
             RuleFor(x => x.AppUser.Password)
+                .NotEmpty();
+
+            RuleFor(x => x.AppUser.Code)
                 .NotEmpty();
         }
     }

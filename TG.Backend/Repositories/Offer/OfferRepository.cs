@@ -1,3 +1,4 @@
+using AutoMapper;
 using TG.Backend.Helpers;
 using TG.Backend.Models.Offer;
 
@@ -6,10 +7,12 @@ namespace TG.Backend.Repositories.Offer;
 public class OfferRepository : IOfferRepository
 {
     private readonly AppDbContext _dbContext;
-
-    public OfferRepository(AppDbContext dbContext)
+    private readonly IMapper _mapper;
+    
+    public OfferRepository(AppDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<Data.Offer>> GetOffersAsync(GetOffersFilterDTO filter)
@@ -17,6 +20,7 @@ public class OfferRepository : IOfferRepository
         var offers = await _dbContext.Offers
             .AsNoTracking()
             .Include(o => o.Vehicle)
+            .Include(o => o.Blobs)
             .Where(o => filter.Gearbox == null || o.Vehicle.Gearbox == filter.Gearbox.GetGearbox())
             .Where(o => filter.Drive == null || o.Vehicle.Drive == filter.Drive.GetDrive())
             .Where(o => (filter.PriceLow == null || o.Price >= filter.PriceLow) && (filter.PriceHigh == null || o.Price <= filter.PriceHigh))
@@ -32,10 +36,16 @@ public class OfferRepository : IOfferRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<Data.Offer?> GetOfferByIdAsync(Guid id)
+    public async Task<Data.Offer?> GetOfferByIdAsync(Guid id, bool track = false)
     {
+        if (!track)
+            return await _dbContext.Offers
+                .AsNoTracking()
+                .Include(o => o.Vehicle)
+                .Include(o => o.Blobs)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        
         return await _dbContext.Offers
-            .AsNoTracking()
             .Include(o => o.Vehicle)
             .FirstOrDefaultAsync(o => o.Id == id);
     }
@@ -45,5 +55,16 @@ public class OfferRepository : IOfferRepository
          _dbContext.Offers.Remove(offer);
 
          await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task EditOfferAsync(Data.Offer currentOffer, EditOfferDTO editOfferDto)
+    {
+        currentOffer.ContactEmail = editOfferDto.OfferDto.ContactEmail;
+        currentOffer.ContactPhoneNumber = editOfferDto.OfferDto.ContactPhoneNumber;
+        currentOffer.Description = editOfferDto.OfferDto.Description;
+        currentOffer.Price = editOfferDto.OfferDto.Price;
+        currentOffer.Vehicle = _mapper.Map<Data.Vehicle>(editOfferDto.OfferDto.Vehicle);
+
+        await _dbContext.SaveChangesAsync();
     }
 }
