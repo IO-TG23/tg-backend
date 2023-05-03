@@ -1,11 +1,11 @@
 using System.Net;
-using TG.Backend.Data;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using TG.Backend.Data;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
 
-namespace TG.Backend.Tests.OfferControllerTests;
+namespace TG.Backend.Tests.ControllerTests;
 
 [Collection("SharedApi")]
 public class OfferControllerTests : IAsyncLifetime
