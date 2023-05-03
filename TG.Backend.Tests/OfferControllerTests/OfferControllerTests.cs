@@ -171,6 +171,59 @@ public class OfferControllerTests : IAsyncLifetime
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
+
+    [Fact]
+    public async Task EditOffer_ForInvalidModel_ReturnsBadRequestResult()
+    {
+        // arrange
+        var offer = GetValidOffer();
+        await Seed(offer);
+        var editOfferDto = new EditOfferDTO
+        {
+            OfferDto = new CreateOfferDTO
+            {
+                Vehicle = null,
+                Price = 0,
+                Description = null,
+                ContactEmail = null,
+                ContactPhoneNumber = null
+            }
+        };
+
+        // act
+        var response = await _client.PutAsync($"Offer/{offer.Id}", editOfferDto.ToJsonHttpContent());
+        
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task EditOffer_ForInvalidId_ReturnsNotFoundResult()
+    {
+        // arrange
+        var editOfferDto = GetValidEditOfferDto();
+        
+        // act
+        var response = await _client.PutAsync($"Offer/{Guid.NewGuid()}", editOfferDto.ToJsonHttpContent());
+
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task EditOffer_ForValidModelAndId_ReturnNoContentResult()
+    {
+        // arrange
+        var offer = GetValidOffer();
+        await Seed(offer);
+        var editOfferDto = GetValidEditOfferDto();
+        
+        // act
+        var response = await _client.PutAsync($"Offer/{offer.Id}", editOfferDto.ToJsonHttpContent());
+
+        // assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
     
     private async Task Seed(Offer offer)
     {
@@ -180,7 +233,7 @@ public class OfferControllerTests : IAsyncLifetime
         await context.SaveChangesAsync();
     }
 
-    private Offer GetValidOffer()
+    private static Offer GetValidOffer()
     {
         return new Offer
         {
@@ -205,6 +258,38 @@ public class OfferControllerTests : IAsyncLifetime
                 FrontWheelTrack = 1,
                 Gearbox = Gearbox.Automatic,
                 Drive = Drive.AWD,
+            }
+        };
+    }
+
+    private static EditOfferDTO GetValidEditOfferDto()
+    {
+        return new EditOfferDTO
+        {
+            OfferDto = new CreateOfferDTO
+            {
+                Vehicle = new VehicleDTO
+                {
+                    Name = "null",
+                    Description = "null",
+                    ProductionStartYear = 1950,
+                    ProductionEndYear = 2000,
+                    NumberOfDoors = 1,
+                    NumberOfSeats = 1,
+                    BootCapacity = 1,
+                    Length = 1,
+                    Height = 1,
+                    Width = 1,
+                    WheelBase = 1,
+                    BackWheelTrack = 1,
+                    FrontWheelTrack = 1,
+                    Gearbox = "Automatic",
+                    Drive = "FWD"
+                },
+                Price = 1500,
+                Description = "desc",
+                ContactEmail = "test@test.com",
+                ContactPhoneNumber = "123456789"
             }
         };
     }

@@ -67,6 +67,7 @@ public class OfferController : ControllerBase
     }
 
     [HttpPut("{id:Guid}")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Employee,Client")]
     public async Task<IActionResult> EditOffer([FromRoute] Guid id, [FromBody] EditOfferDTO editOfferDto)
     {
         var editOfferResponse = await _sender.Send(new EditOfferCommand(editOfferDto, id));

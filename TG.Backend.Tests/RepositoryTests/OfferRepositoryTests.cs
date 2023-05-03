@@ -1,17 +1,16 @@
+using AutoMapper;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using Moq.EntityFrameworkCore;
 using TG.Backend.Data;
 using TG.Backend.Repositories.Offer;
-using Xunit.Abstractions;
 
 namespace TG.Backend.Tests.RepositoryTests;
 
 public class OfferRepositoryTests
 {
     private readonly Mock<AppDbContext> _contextMock = new();
+    private readonly Mock<IMapper> _mapperMock = new();
     
     [Fact]
     public async Task GetOfferById_ForValidId_ReturnsCorrectOffer()
@@ -19,14 +18,14 @@ public class OfferRepositoryTests
         // arrange
         _contextMock.Setup(x => x.Set<Offer>())
             .ReturnsDbSet(GetFakeOfferList());
-        var repository = new OfferRepository(_contextMock.Object);
+        var repository = new OfferRepository(_contextMock.Object, _mapperMock.Object);
 
         // act
         var offer = await repository.GetOfferByIdAsync(Guid.Empty);
 
         // assert
-        offer?.Should().NotBeNull();
-        offer?.Description.Should().Be("desc");
+        offer.Should().NotBeNull();
+        offer.Description.Should().Be("desc");
     }
 
     [Fact]
@@ -35,7 +34,7 @@ public class OfferRepositoryTests
         // arrange
         _contextMock.Setup(x => x.Set<Offer>())
             .ReturnsDbSet(new List<Offer>());
-        var repository = new OfferRepository(_contextMock.Object);
+        var repository = new OfferRepository(_contextMock.Object, _mapperMock.Object);
 
         // act
         await repository.CreateOfferAsync(GetFakeOfferList().First());
@@ -49,9 +48,90 @@ public class OfferRepositoryTests
     {
         return new List<Offer>()
         {
-            new Offer
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Price = 1500,
+                Description = "desc",
+                ContactEmail = "test@test.com",
+                ContactPhoneNumber = "123456789",
+                Vehicle = new Vehicle
+                {
+                    Id = Guid.Empty,
+                    Name = "name",
+                    Description = "desc",
+                    ProductionStartYear = 1950,
+                    NumberOfDoors = 2000,
+                    NumberOfSeats = 1,
+                    BootCapacity = 1,
+                    Length = 1,
+                    Height = 1,
+                    Width = 1,
+                    WheelBase = 1,
+                    BackWheelTrack = 1,
+                    FrontWheelTrack = 1,
+                    Gearbox = Gearbox.Automatic,
+                    Drive = Drive.AWD
+                },
+                VehicleId = Guid.Empty
+            },
+            new()
             {
                 Id = Guid.Empty,
+                Price = 1500,
+                Description = "desc",
+                ContactEmail = "test@test.com",
+                ContactPhoneNumber = "123456789",
+                Vehicle = new Vehicle
+                {
+                    Id = Guid.Empty,
+                    Name = "name",
+                    Description = "desc",
+                    ProductionStartYear = 1950,
+                    NumberOfDoors = 2000,
+                    NumberOfSeats = 1,
+                    BootCapacity = 1,
+                    Length = 1,
+                    Height = 1,
+                    Width = 1,
+                    WheelBase = 1,
+                    BackWheelTrack = 1,
+                    FrontWheelTrack = 1,
+                    Gearbox = Gearbox.Automatic,
+                    Drive = Drive.AWD
+                },
+                VehicleId = Guid.Empty
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Price = 1500,
+                Description = "desc",
+                ContactEmail = "test@test.com",
+                ContactPhoneNumber = "123456789",
+                Vehicle = new Vehicle
+                {
+                    Id = Guid.Empty,
+                    Name = "name",
+                    Description = "desc",
+                    ProductionStartYear = 1950,
+                    NumberOfDoors = 2000,
+                    NumberOfSeats = 1,
+                    BootCapacity = 1,
+                    Length = 1,
+                    Height = 1,
+                    Width = 1,
+                    WheelBase = 1,
+                    BackWheelTrack = 1,
+                    FrontWheelTrack = 1,
+                    Gearbox = Gearbox.Automatic,
+                    Drive = Drive.AWD
+                },
+                VehicleId = Guid.Empty
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
                 Price = 1500,
                 Description = "desc",
                 ContactEmail = "test@test.com",
