@@ -233,7 +233,7 @@ public class OfferControllerTests : IAsyncLifetime
         await context.SaveChangesAsync();
     }
 
-    private static Offer GetValidOffer()
+    public static Offer GetValidOffer()
     {
         return new Offer
         {
