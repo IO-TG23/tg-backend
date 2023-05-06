@@ -1,7 +1,9 @@
 using System.Net;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using TG.Backend.Data;
+using TG.Backend.Models.Auth;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
 
@@ -13,10 +15,12 @@ public class OfferControllerTests : IAsyncLifetime
     private readonly HttpClient _client;
     private readonly Func<Task> _resetDatabase;
     private readonly ApiFactory _factory;
-    
+    private readonly UserManager<AppUser> _userManager;
+
     public OfferControllerTests(ApiFactory apiFactory)
     {
         _factory = apiFactory;
+        _userManager = apiFactory.UserManager;
         _client = apiFactory.HttpClient;
         _resetDatabase = apiFactory.ResetDatabaseAsync;
     }
@@ -51,8 +55,10 @@ public class OfferControllerTests : IAsyncLifetime
     public async Task GetOfferBydId_ForValidId_ReturnsOkResult()
     {
         // arrange
-        var offer = GetValidOffer();
-        await Seed(offer);
+        var appUserId = await SeedAppUser();
+        var clientId = await SeedClient(appUserId);
+        var offer = GetValidOffer(clientId);
+        await SeedOffer(offer);
 
         // act
         var response = await _client.GetAsync($"Offer/{offer.Id}");
@@ -76,6 +82,8 @@ public class OfferControllerTests : IAsyncLifetime
     public async Task CreateOffer_ForValidModel_ReturnsNoContentResult()
     {
         // arrange
+        var appUserId = await SeedAppUser();
+        var clientId = await SeedClient(appUserId);
         var offer = new CreateOfferDTO
         {
             Vehicle = new VehicleDTO
@@ -94,7 +102,8 @@ public class OfferControllerTests : IAsyncLifetime
                 BackWheelTrack = 1,
                 FrontWheelTrack = 1,
                 Gearbox = "Automatic",
-                Drive = "AWD"
+                Drive = "AWD",
+                ClientId = clientId
             },
             Price = 1500,
             Description = "desc",
@@ -132,7 +141,8 @@ public class OfferControllerTests : IAsyncLifetime
                 BackWheelTrack = 0,
                 FrontWheelTrack = 0,
                 Gearbox = null,
-                Drive = null
+                Drive = null,
+                ClientId = default
             },
             Price = 1500,
             Description = "desc",
@@ -152,8 +162,10 @@ public class OfferControllerTests : IAsyncLifetime
     public async Task DeleteOfferById_ForValidId_ReturnsNoContentResult()
     {
         // arrange
-        var offer = GetValidOffer();
-        await Seed(offer);
+        var appUserId = await SeedAppUser();
+        var clientId = await SeedClient(appUserId);
+        var offer = GetValidOffer(clientId);
+        await SeedOffer(offer);
 
         // act
         var response = await _client.DeleteAsync($"Offer/{offer.Id}");
@@ -176,8 +188,10 @@ public class OfferControllerTests : IAsyncLifetime
     public async Task EditOffer_ForInvalidModel_ReturnsBadRequestResult()
     {
         // arrange
-        var offer = GetValidOffer();
-        await Seed(offer);
+        var appUserId = await SeedAppUser();
+        var clientId = await SeedClient(appUserId);
+        var offer = GetValidOffer(clientId);
+        await SeedOffer(offer);
         var editOfferDto = new EditOfferDTO
         {
             OfferDto = new CreateOfferDTO
@@ -192,7 +206,7 @@ public class OfferControllerTests : IAsyncLifetime
 
         // act
         var response = await _client.PutAsync($"Offer/{offer.Id}", editOfferDto.ToJsonHttpContent());
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -201,8 +215,8 @@ public class OfferControllerTests : IAsyncLifetime
     public async Task EditOffer_ForInvalidId_ReturnsNotFoundResult()
     {
         // arrange
-        var editOfferDto = GetValidEditOfferDto();
-        
+        var editOfferDto = GetValidEditOfferDto(Guid.Empty);
+
         // act
         var response = await _client.PutAsync($"Offer/{Guid.NewGuid()}", editOfferDto.ToJsonHttpContent());
 
@@ -214,10 +228,12 @@ public class OfferControllerTests : IAsyncLifetime
     public async Task EditOffer_ForValidModelAndId_ReturnNoContentResult()
     {
         // arrange
-        var offer = GetValidOffer();
-        await Seed(offer);
-        var editOfferDto = GetValidEditOfferDto();
-        
+        var appUserId = await SeedAppUser();
+        var clientId = await SeedClient(appUserId);
+        var offer = GetValidOffer(clientId);
+        await SeedOffer(offer);
+        var editOfferDto = GetValidEditOfferDto(clientId);
+
         // act
         var response = await _client.PutAsync($"Offer/{offer.Id}", editOfferDto.ToJsonHttpContent());
 
@@ -225,15 +241,7 @@ public class OfferControllerTests : IAsyncLifetime
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
     
-    private async Task Seed(Offer offer)
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        await context.Offers.AddAsync(offer);
-        await context.SaveChangesAsync();
-    }
-
-    public static Offer GetValidOffer()
+    public static Offer GetValidOffer(Guid clientId)
     {
         return new Offer
         {
@@ -258,11 +266,12 @@ public class OfferControllerTests : IAsyncLifetime
                 FrontWheelTrack = 1,
                 Gearbox = Gearbox.Automatic,
                 Drive = Drive.AWD,
+                ClientId = clientId
             }
         };
     }
 
-    private static EditOfferDTO GetValidEditOfferDto()
+    private static EditOfferDTO GetValidEditOfferDto(Guid clientId)
     {
         return new EditOfferDTO
         {
@@ -284,7 +293,8 @@ public class OfferControllerTests : IAsyncLifetime
                     BackWheelTrack = 1,
                     FrontWheelTrack = 1,
                     Gearbox = "Automatic",
-                    Drive = "FWD"
+                    Drive = "FWD",
+                    ClientId = clientId
                 },
                 Price = 1500,
                 Description = "desc",
@@ -294,6 +304,37 @@ public class OfferControllerTests : IAsyncLifetime
         };
     }
 
+    private async Task SeedOffer(Offer offer)
+    {
+        using var scope = _factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await context.Offers.AddAsync(offer);
+        await context.SaveChangesAsync();
+    }
+
+    private async Task<Guid> SeedClient(Guid appUserId)
+    {
+        using var scope = _factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var client = new Client
+        {
+            AppUserId = appUserId,
+            Vehicles = new List<Vehicle>()
+        };
+        await context.Clients.AddAsync(client);
+        await context.SaveChangesAsync();
+
+        return client.Id;
+    }
+
+    private async Task<Guid> SeedAppUser()
+    {
+        var appUser = new AppUser() { Email = "test@test.com" };
+        await _userManager.CreateAsync(appUser, "password");
+
+        return Guid.Parse(appUser.Id);
+    }
+    
     public Task InitializeAsync() => Task.CompletedTask;
 
     // clean tables after each test

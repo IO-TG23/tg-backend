@@ -59,7 +59,8 @@ public class EditOfferDTOValidatorTests
                     BackWheelTrack = 1,
                     FrontWheelTrack = 1,
                     Gearbox = "Automatic",
-                    Drive = "FWD"
+                    Drive = "FWD",
+                    ClientId = default
                 },
                 Description = "desc",
                 ContactEmail = "test@test.com",
@@ -100,7 +101,8 @@ public class EditOfferDTOValidatorTests
                         BackWheelTrack = 0,
                         FrontWheelTrack = 0,
                         Gearbox = null,
-                        Drive = null
+                        Drive = null,
+                        ClientId = default
                     },
                     Price = 0,
                     Description = null,

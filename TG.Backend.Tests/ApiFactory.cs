@@ -4,6 +4,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ using Npgsql;
 using Respawn;
 using Respawn.Graph;
 using TG.Backend.Data;
+using TG.Backend.Models.Auth;
 
 namespace TG.Backend.Tests;
 
@@ -21,6 +23,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public HttpClient HttpClient { get; private set; } = default!;
     private DbConnection _dbConnection = default!;
     private Respawner _respawner = default!;
+    public UserManager<AppUser> UserManager { get; private set; } = default!;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -48,6 +51,8 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             // setup fake authentication and authorization
             services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
             services.AddMvc(options => options.Filters.Add(new FakeUserFilter()));
+
+            UserManager = services.BuildServiceProvider().GetRequiredService<UserManager<AppUser>>();
         });
 
         base.ConfigureWebHost(builder);

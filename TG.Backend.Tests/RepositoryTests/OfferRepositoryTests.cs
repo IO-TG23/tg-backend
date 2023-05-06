@@ -156,7 +156,8 @@ public class OfferRepositoryTests
                     BackWheelTrack = 2,
                     FrontWheelTrack = 2,
                     Gearbox = "Manual",
-                    Drive = "FWD"
+                    Drive = "FWD",
+                    ClientId = default
                 },
                 Price = 1950,
                 Description = "desc1",
