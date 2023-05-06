@@ -367,7 +367,8 @@ public class CreateOfferDTOValidatorTests
                 BackWheelTrack = 150,
                 FrontWheelTrack = 150,
                 Gearbox = "Automatic",
-                Drive = "FWD"
+                Drive = "FWD",
+                ClientId = Guid.Empty
             },
             Price = 1500,
             Description = "Description",

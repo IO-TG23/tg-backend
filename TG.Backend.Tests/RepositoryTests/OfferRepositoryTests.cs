@@ -51,9 +51,9 @@ public class OfferRepositoryTests
         // assert
         offers.Count.Should().Be(1);
         offers.All(o =>
-                o.Price >= filter.PriceLow && 
+                o.Price >= filter.PriceLow &&
                 o.Price <= filter.PriceHigh &&
-                o.Vehicle.Gearbox == filter.Gearbox.GetGearbox() && 
+                o.Vehicle.Gearbox == filter.Gearbox.GetGearbox() &&
                 o.Vehicle.Drive == filter.Drive.GetDrive())
             .Should().BeTrue();
     }
@@ -77,7 +77,7 @@ public class OfferRepositoryTests
     [Fact]
     public async Task GetOfferById_ForNotExistingId_ReturnsNull()
     {
-        
+
         // arrange
         _contextMock.Setup(x => x.Set<Offer>())
             .ReturnsDbSet(GetFakeOfferList());
@@ -103,12 +103,12 @@ public class OfferRepositoryTests
         await repository.CreateOfferAsync(addedObject);
 
         // assert
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.Set<Offer>().AddAsync(addedObject, default), Times.Once);
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.SaveChangesAsync(default), Times.Once);
     }
-    
+
     [Fact]
     public async Task DeleteOffer_ForValidOffer_ShouldCallSaveChangesAsyncOnContextAndRemoveOnDbSet()
     {
@@ -122,9 +122,9 @@ public class OfferRepositoryTests
         await repository.DeleteOfferAsync(removedObject);
 
         // assert
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.Set<Offer>().Remove(removedObject), Times.Once);
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.SaveChangesAsync(default), Times.Once);
     }
 
@@ -156,7 +156,8 @@ public class OfferRepositoryTests
                     BackWheelTrack = 2,
                     FrontWheelTrack = 2,
                     Gearbox = "Manual",
-                    Drive = "FWD"
+                    Drive = "FWD",
+                    ClientId = Guid.Empty
                 },
                 Price = 1950,
                 Description = "desc1",
@@ -169,7 +170,7 @@ public class OfferRepositoryTests
         await repository.EditOfferAsync(editedOffer, editOfferDto);
 
         // assert
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.SaveChangesAsync(default), Times.Once);
         editedOffer.Description.Should().Be("desc1");
         editedOffer.Price.Should().Be(1950);

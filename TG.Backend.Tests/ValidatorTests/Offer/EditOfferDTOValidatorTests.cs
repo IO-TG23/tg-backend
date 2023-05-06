@@ -13,7 +13,7 @@ public class EditOfferDTOValidatorTests
     {
         public EditOfferDTO EditOfferDto { get; set; }
         public Guid Id { get; set; }
-        
+
         public EditOfferDtoWithId(EditOfferDTO editOfferDto, Guid id)
         {
             EditOfferDto = editOfferDto;
@@ -59,7 +59,8 @@ public class EditOfferDTOValidatorTests
                     BackWheelTrack = 1,
                     FrontWheelTrack = 1,
                     Gearbox = "Automatic",
-                    Drive = "FWD"
+                    Drive = "FWD",
+                    ClientId = Guid.Empty
                 },
                 Description = "desc",
                 ContactEmail = "test@test.com",
@@ -100,7 +101,8 @@ public class EditOfferDTOValidatorTests
                         BackWheelTrack = 0,
                         FrontWheelTrack = 0,
                         Gearbox = null,
-                        Drive = null
+                        Drive = null,
+                        ClientId = Guid.Empty
                     },
                     Price = 0,
                     Description = null,

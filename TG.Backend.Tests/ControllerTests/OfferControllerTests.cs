@@ -1,6 +1,6 @@
-using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using TG.Backend.Data;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
@@ -13,7 +13,7 @@ public class OfferControllerTests : IAsyncLifetime
     private readonly HttpClient _client;
     private readonly Func<Task> _resetDatabase;
     private readonly ApiFactory _factory;
-    
+
     public OfferControllerTests(ApiFactory apiFactory)
     {
         _factory = apiFactory;
@@ -94,7 +94,8 @@ public class OfferControllerTests : IAsyncLifetime
                 BackWheelTrack = 1,
                 FrontWheelTrack = 1,
                 Gearbox = "Automatic",
-                Drive = "AWD"
+                Drive = "AWD",
+                ClientId = Guid.Empty
             },
             Price = 1500,
             Description = "desc",
@@ -132,7 +133,8 @@ public class OfferControllerTests : IAsyncLifetime
                 BackWheelTrack = 0,
                 FrontWheelTrack = 0,
                 Gearbox = null,
-                Drive = null
+                Drive = null,
+                ClientId = Guid.Empty
             },
             Price = 1500,
             Description = "desc",
@@ -192,7 +194,7 @@ public class OfferControllerTests : IAsyncLifetime
 
         // act
         var response = await _client.PutAsync($"Offer/{offer.Id}", editOfferDto.ToJsonHttpContent());
-        
+
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -202,7 +204,7 @@ public class OfferControllerTests : IAsyncLifetime
     {
         // arrange
         var editOfferDto = GetValidEditOfferDto();
-        
+
         // act
         var response = await _client.PutAsync($"Offer/{Guid.NewGuid()}", editOfferDto.ToJsonHttpContent());
 
@@ -217,14 +219,14 @@ public class OfferControllerTests : IAsyncLifetime
         var offer = GetValidOffer();
         await Seed(offer);
         var editOfferDto = GetValidEditOfferDto();
-        
+
         // act
         var response = await _client.PutAsync($"Offer/{offer.Id}", editOfferDto.ToJsonHttpContent());
 
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
-    
+
     private async Task Seed(Offer offer)
     {
         using var scope = _factory.Services.CreateScope();
@@ -284,7 +286,8 @@ public class OfferControllerTests : IAsyncLifetime
                     BackWheelTrack = 1,
                     FrontWheelTrack = 1,
                     Gearbox = "Automatic",
-                    Drive = "FWD"
+                    Drive = "FWD",
+                    ClientId = Guid.Empty
                 },
                 Price = 1500,
                 Description = "desc",
