@@ -12,7 +12,13 @@ namespace TG.Backend.Data
         public DbSet<Blob> Blobs => Set<Blob>();
         public DbSet<Client> Clients => Set<Client>();
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+
+        public AppDbContext()
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

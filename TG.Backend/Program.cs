@@ -28,3 +28,7 @@ app.MapServerSentEvents<NotificationsServerSentEventsService>("/sse");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.Run();
+
+public partial class Program
+{
+}

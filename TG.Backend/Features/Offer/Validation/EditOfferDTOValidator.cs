@@ -13,9 +13,11 @@ public class EditOfferDTOValidator : AbstractValidator<EditOfferCommand>
             .NotEmpty()
             .WithMessage("Id of offer cannot be empty!");
 
-        RuleFor(e => new CreateOfferCommand(e.EditOfferDto.OfferDto))
+        RuleFor(e => e.EditOfferDto.OfferDto)
             .NotNull()
-            .WithMessage("Offer cannot be null!")
+            .WithMessage("Offer cannot be null!");
+
+        RuleFor(e => new CreateOfferCommand(e.EditOfferDto.OfferDto))
             .SetValidator(new CreateOfferDTOValidator());
     }
 }
