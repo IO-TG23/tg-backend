@@ -1,11 +1,13 @@
 ﻿using Azure.Storage.Blobs;
 using FluentValidation;
 using Google.Authenticator;
+using Lib.AspNetCore.ServerSentEvents;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using TG.Backend.Data.SSE;
 using TG.Backend.Email;
 using TG.Backend.Features.Behaviours;
 using TG.Backend.Filters;
@@ -76,6 +78,8 @@ namespace TG.Backend.Extensions
             #endregion
 
             #region services-and-repositories
+            services.AddServerSentEvents();
+            services.AddServerSentEvents<INotificationsServerSentEventsService, NotificationsServerSentEventsService>();
             services.AddSingleton<TwoFactorAuthenticator>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddScoped<IOfferRepository, OfferRepository>();

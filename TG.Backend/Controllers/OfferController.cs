@@ -1,5 +1,7 @@
+using Lib.AspNetCore.ServerSentEvents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TG.Backend.Data.SSE;
 using TG.Backend.Features.Offer.CreateOffer;
 using TG.Backend.Features.Offer.DeleteAllClientOffers;
 using TG.Backend.Features.Offer.DeleteOffer;
@@ -16,10 +18,12 @@ namespace TG.Backend.Controllers;
 public class OfferController : ControllerBase
 {
     private readonly ISender _sender;
+    private readonly INotificationsServerSentEventsService _sseClient;
 
-    public OfferController(ISender sender)
+    public OfferController(ISender sender, INotificationsServerSentEventsService sseClient)
     {
         _sender = sender;
+        _sseClient = sseClient;
     }
 
     [HttpGet]
@@ -51,7 +55,16 @@ public class OfferController : ControllerBase
         var createOfferResponse = await _sender.Send(new CreateOfferCommand(createOfferDto));
 
         if (createOfferResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
+        {
+            await _sseClient.SendEventAsync(new ServerSentEvent()
+            {
+                Id = "new-offer",
+                Data = new List<string>() { "New offer has been added" }
+            });
+
             return NoContent();
+        }
+
 
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
