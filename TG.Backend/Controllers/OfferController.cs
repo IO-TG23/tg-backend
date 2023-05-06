@@ -43,7 +43,7 @@ public class OfferController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Employee")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> CreateOffer([FromBody] CreateOfferDTO createOfferDto)
     {
         var createOfferResponse = await _sender.Send(new CreateOfferCommand(createOfferDto));
@@ -55,7 +55,7 @@ public class OfferController : ControllerBase
     }
 
     [HttpDelete("{id:Guid}")]
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin,Employee")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> DeleteOffer([FromRoute] Guid id)
     {
         var deleteOfferResponse = await _sender.Send(new DeleteOfferCommand(id));
@@ -67,6 +67,7 @@ public class OfferController : ControllerBase
     }
 
     [HttpPut("{id:Guid}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> EditOffer([FromRoute] Guid id, [FromBody] EditOfferDTO editOfferDto)
     {
         var editOfferResponse = await _sender.Send(new EditOfferCommand(editOfferDto, id));
