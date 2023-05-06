@@ -8,7 +8,7 @@ public class OfferRepository : IOfferRepository
 {
     private readonly AppDbContext _dbContext;
     private readonly IMapper _mapper;
-    
+
     public OfferRepository(AppDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
@@ -28,7 +28,7 @@ public class OfferRepository : IOfferRepository
 
         return offers;
     }
-    
+
     public async Task CreateOfferAsync(Data.Offer offer)
     {
         await _dbContext.Offers.AddAsync(offer);
@@ -44,7 +44,7 @@ public class OfferRepository : IOfferRepository
                 .Include(o => o.Vehicle)
                 .Include(o => o.Blobs)
                 .FirstOrDefaultAsync(o => o.Id == id);
-        
+
         return await _dbContext.Offers
             .Include(o => o.Vehicle)
             .FirstOrDefaultAsync(o => o.Id == id);
@@ -52,9 +52,9 @@ public class OfferRepository : IOfferRepository
 
     public async Task DeleteOfferAsync(Data.Offer offer)
     {
-         _dbContext.Offers.Remove(offer);
+        _dbContext.Offers.Remove(offer);
 
-         await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task EditOfferAsync(Data.Offer currentOffer, EditOfferDTO editOfferDto)
@@ -64,6 +64,25 @@ public class OfferRepository : IOfferRepository
         currentOffer.Description = editOfferDto.OfferDto.Description;
         currentOffer.Price = editOfferDto.OfferDto.Price;
         currentOffer.Vehicle = _mapper.Map<Data.Vehicle>(editOfferDto.OfferDto.Vehicle);
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteAllClientOffersAsync(DeleteAllClientOffersDTO clientDto)
+    {
+        Guid? clientId = await _dbContext.Clients.Include(c => c.AppUser)
+            .Where(c => c.AppUser.Email == clientDto.Email)
+            .Select(c => c.Id).FirstOrDefaultAsync();
+
+        if (clientId is null)
+        {
+            return;
+        }
+
+        List<Vehicle> vehicles = await _dbContext.Vehicles.Include(v => v.Client)
+            .Where(v => v.ClientId == clientId).ToListAsync();
+
+        _dbContext.Vehicles.RemoveRange(vehicles);
 
         await _dbContext.SaveChangesAsync();
     }

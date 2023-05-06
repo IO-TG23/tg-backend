@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Google.Authenticator;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using TG.Backend.Models.Client;
+using TG.Backend.Repositories.Client;
 
 namespace TG.Backend.Features.Handler
 {
@@ -12,9 +14,11 @@ namespace TG.Backend.Features.Handler
         private readonly IEmailSender _sender;
         private readonly TwoFactorAuthenticator _authenticator;
         private readonly IConfiguration _configuration;
+        private readonly IClientRepository _clientRepository;
 
         public RegisterUserHandler(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager,
-            IMapper mapper, IEmailSender sender, TwoFactorAuthenticator authenticator, IConfiguration configuration)
+            IMapper mapper, IEmailSender sender, TwoFactorAuthenticator authenticator, IConfiguration configuration,
+            IClientRepository clientRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -22,6 +26,7 @@ namespace TG.Backend.Features.Handler
             _sender = sender;
             _authenticator = authenticator;
             _configuration = configuration;
+            _clientRepository = clientRepository;
         }
 
         public async Task<AuthResponseModel> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -54,6 +59,8 @@ namespace TG.Backend.Features.Handler
 
             SetupCode setupInfo = _authenticator.GenerateSetupCode(_configuration["2FA:Issuer"], user.Email, _configuration["2FA:Key"], false);
             string qrCode = setupInfo.QrCodeSetupImageUrl;
+
+            await _clientRepository.CreateClient(new CreateClientDTO() { AppUserId = Guid.Parse(user.Id), AppUser = user });
 
             return new()
             {

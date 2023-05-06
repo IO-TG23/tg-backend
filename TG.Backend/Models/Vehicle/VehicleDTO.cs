@@ -17,4 +17,5 @@ public class VehicleDTO
     public required decimal FrontWheelTrack { get; set; }
     public required string Gearbox { get; set; }
     public required string Drive { get; set; }
+    public required Guid ClientId { get; set; }
 }

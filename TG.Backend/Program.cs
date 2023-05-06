@@ -1,3 +1,5 @@
+using Lib.AspNetCore.ServerSentEvents;
+using TG.Backend.Data.SSE;
 using TG.Backend.Extensions;
 using TG.Backend.Middlewares;
 
@@ -22,7 +24,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapServerSentEvents<NotificationsServerSentEventsService>("/sse");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.Run();
