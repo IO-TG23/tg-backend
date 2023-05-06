@@ -10,6 +10,7 @@ namespace TG.Backend.Data
         public DbSet<Vehicle> Vehicles => Set<Vehicle>();
         public DbSet<Offer> Offers => Set<Offer>();
         public DbSet<Blob> Blobs => Set<Blob>();
+        public DbSet<Client> Clients => Set<Client>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

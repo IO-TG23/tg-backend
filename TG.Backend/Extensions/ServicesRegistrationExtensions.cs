@@ -1,15 +1,17 @@
-﻿using FluentValidation;
+﻿using Azure.Storage.Blobs;
+using FluentValidation;
 using Google.Authenticator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Azure.Storage.Blobs;
 using TG.Backend.Email;
 using TG.Backend.Features.Behaviours;
 using TG.Backend.Filters;
 using TG.Backend.Middlewares;
 using TG.Backend.Repositories.Blob;
+using TG.Backend.Repositories.Client;
 using TG.Backend.Repositories.Offer;
 using TG.Backend.Services;
 
@@ -61,7 +63,9 @@ namespace TG.Backend.Extensions
 
             services.AddAuthorization();
 
+            services.AddSingleton<JwtSecurityTokenHandler>();
             services.AddScoped<ValidateAccountNotLockedFilter>();
+            services.AddScoped<GetCurrentUserFromTheHeaderFilter>();
 
             #endregion auth
 
@@ -75,6 +79,7 @@ namespace TG.Backend.Extensions
             services.AddSingleton<TwoFactorAuthenticator>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddScoped<IOfferRepository, OfferRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
             services.AddTransient<IBlobRepository, BlobRepository>();
 
             if (!builder.Environment.IsProduction())
@@ -94,7 +99,7 @@ namespace TG.Backend.Extensions
             builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
             builder.Services.AddScoped(x =>
                 new BlobServiceClient(builder.Configuration.GetValue<string>("ConnectionStrings:AzureBlobContainer")));
-            
+
             #endregion
 
             #region cors

@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TG.Backend.Features.Offer.CreateOffer;
+using TG.Backend.Features.Offer.DeleteAllClientOffers;
 using TG.Backend.Features.Offer.DeleteOffer;
 using TG.Backend.Features.Offer.EditOffer;
 using TG.Backend.Features.Offer.GetOfferById;
 using TG.Backend.Features.Offer.GetOffers;
+using TG.Backend.Filters;
 using TG.Backend.Models.Offer;
 
 namespace TG.Backend.Controllers;
@@ -59,6 +61,23 @@ public class OfferController : ControllerBase
     public async Task<IActionResult> DeleteOffer([FromRoute] Guid id)
     {
         var deleteOfferResponse = await _sender.Send(new DeleteOfferCommand(id));
+
+        if (deleteOfferResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
+            return NoContent();
+
+        return StatusCode(StatusCodes.Status503ServiceUnavailable);
+    }
+
+    [HttpDelete("all")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [ServiceFilter(typeof(GetCurrentUserFromTheHeaderFilter))]
+    public async Task<IActionResult> DeleteAllClientOffers()
+    {
+        DeleteAllClientOffersDTO dto = new() { Email = HttpContext.Items["email"].ToString() };
+
+        var deleteOfferResponse = await _sender.Send(new DeleteAllClientOffersCommand(dto));
+
+        HttpContext.Items["email"] = null;
 
         if (deleteOfferResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
             return NoContent();
