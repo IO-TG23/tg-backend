@@ -31,7 +31,10 @@ namespace TG.Backend.Extensions
             #region auth
             services.AddDbContext<AppDbContext>(opts =>
             {
-                opts.UseNpgsql(builder.Configuration.GetConnectionString("MainConn"));
+                opts.UseNpgsql(builder.Configuration.GetConnectionString("MainConn"), pgOpts =>
+                {
+                    pgOpts.SetPostgresVersion(new Version("9.6"));
+                });
             })
                 .AddIdentity<AppUser, IdentityRole>(opts =>
                 {
