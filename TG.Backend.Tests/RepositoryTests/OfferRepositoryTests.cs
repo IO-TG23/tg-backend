@@ -4,6 +4,7 @@ using Moq;
 using Moq.EntityFrameworkCore;
 using TG.Backend.Data;
 using TG.Backend.Helpers;
+using TG.Backend.Models.Auth;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
 using TG.Backend.Repositories.Offer;
@@ -51,9 +52,9 @@ public class OfferRepositoryTests
         // assert
         offers.Count.Should().Be(1);
         offers.All(o =>
-                o.Price >= filter.PriceLow && 
+                o.Price >= filter.PriceLow &&
                 o.Price <= filter.PriceHigh &&
-                o.Vehicle.Gearbox == filter.Gearbox.GetGearbox() && 
+                o.Vehicle.Gearbox == filter.Gearbox.GetGearbox() &&
                 o.Vehicle.Drive == filter.Drive.GetDrive())
             .Should().BeTrue();
     }
@@ -77,7 +78,6 @@ public class OfferRepositoryTests
     [Fact]
     public async Task GetOfferById_ForNotExistingId_ReturnsNull()
     {
-        
         // arrange
         _contextMock.Setup(x => x.Set<Offer>())
             .ReturnsDbSet(GetFakeOfferList());
@@ -103,12 +103,12 @@ public class OfferRepositoryTests
         await repository.CreateOfferAsync(addedObject);
 
         // assert
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.Set<Offer>().AddAsync(addedObject, default), Times.Once);
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.SaveChangesAsync(default), Times.Once);
     }
-    
+
     [Fact]
     public async Task DeleteOffer_ForValidOffer_ShouldCallSaveChangesAsyncOnContextAndRemoveOnDbSet()
     {
@@ -122,9 +122,9 @@ public class OfferRepositoryTests
         await repository.DeleteOfferAsync(removedObject);
 
         // assert
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.Set<Offer>().Remove(removedObject), Times.Once);
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.SaveChangesAsync(default), Times.Once);
     }
 
@@ -170,11 +170,128 @@ public class OfferRepositoryTests
         await repository.EditOfferAsync(editedOffer, editOfferDto);
 
         // assert
-        _contextMock.Verify(x => 
+        _contextMock.Verify(x =>
             x.SaveChangesAsync(default), Times.Once);
         editedOffer.Description.Should().Be("desc1");
         editedOffer.Price.Should().Be(1950);
         editedOffer.ContactPhoneNumber.Should().Be("987654321");
+    }
+
+    [Fact]
+    public async Task DeleteAllClientOffersAsync_ForInvalidClientEmail_ShouldNotCallSaveChangesAsyncAndVehicleDbSet()
+    {
+        // arrange
+        _contextMock.Setup(x => x.Set<Vehicle>())
+            .ReturnsDbSet(new List<Vehicle>());
+        _contextMock.Setup(x => x.Set<Client>())
+            .ReturnsDbSet(new List<Client>());
+        var repository = new OfferRepository(_contextMock.Object, _mapperMock.Object);
+
+        // act
+        await repository.DeleteAllClientOffersAsync(new DeleteAllClientOffersDTO
+        {
+            Email = "test@test.com"
+        });
+
+        // assert
+        _contextMock.Verify(x =>
+            x.SaveChangesAsync(default), Times.Never);
+        _contextMock.Verify(x =>
+            x.Set<Vehicle>(), Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteAllClientOffersAsync_ForValidClientEmail_ShouldCallRemoveRangeAndSaveChangesAsync()
+    {
+        // arrange
+        var clientId = Guid.NewGuid();
+        const string clientEmail = "test@test.com";
+        var appUser = new AppUser()
+        {
+            Email = clientEmail
+        };
+        _contextMock.Setup(x => x.Set<Vehicle>())
+            .ReturnsDbSet(new List<Vehicle>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "name",
+                    Description = "desc",
+                    ProductionStartYear = 1950,
+                    NumberOfDoors = 2000,
+                    NumberOfSeats = 1,
+                    BootCapacity = 1,
+                    Length = 1,
+                    Height = 1,
+                    Width = 1,
+                    WheelBase = 1,
+                    BackWheelTrack = 1,
+                    FrontWheelTrack = 1,
+                    Gearbox = Gearbox.Automatic,
+                    Drive = Drive.FWD,
+                    ClientId = clientId
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "name",
+                    Description = "desc",
+                    ProductionStartYear = 1950,
+                    NumberOfDoors = 2000,
+                    NumberOfSeats = 1,
+                    BootCapacity = 1,
+                    Length = 1,
+                    Height = 1,
+                    Width = 1,
+                    WheelBase = 1,
+                    BackWheelTrack = 1,
+                    FrontWheelTrack = 1,
+                    Gearbox = Gearbox.Automatic,
+                    Drive = Drive.FWD,
+                    ClientId = clientId
+                },
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "name",
+                    Description = "desc",
+                    ProductionStartYear = 1950,
+                    NumberOfDoors = 2000,
+                    NumberOfSeats = 1,
+                    BootCapacity = 1,
+                    Length = 1,
+                    Height = 1,
+                    Width = 1,
+                    WheelBase = 1,
+                    BackWheelTrack = 1,
+                    FrontWheelTrack = 1,
+                    Gearbox = Gearbox.Automatic,
+                    Drive = Drive.FWD
+                },
+            });
+        _contextMock.Setup(x => x.Set<Client>())
+            .ReturnsDbSet(new List<Client>
+            {
+                new()
+                {
+                    Id = clientId,
+                    AppUser = appUser
+                }
+            });
+        var repository = new OfferRepository(_contextMock.Object, _mapperMock.Object);
+
+        // act
+        await repository.DeleteAllClientOffersAsync(new DeleteAllClientOffersDTO
+        {
+            Email = clientEmail
+        });
+
+        // assert
+        _contextMock.Verify(x =>
+            x.SaveChangesAsync(default), Times.Once);
+        _contextMock.Verify(x =>
+            x.Set<Vehicle>().RemoveRange(It.IsAny<List<Vehicle>>()), Times.Once);
     }
 
     private static List<Offer> GetFakeOfferList()
