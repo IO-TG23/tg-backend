@@ -23,7 +23,8 @@ public class OfferRepository : IOfferRepository
             .Include(o => o.Blobs)
             .Where(o => filter.Gearbox == null || o.Vehicle.Gearbox == filter.Gearbox.GetGearbox())
             .Where(o => filter.Drive == null || o.Vehicle.Drive == filter.Drive.GetDrive())
-            .Where(o => (filter.PriceLow == null || o.Price >= filter.PriceLow) && (filter.PriceHigh == null || o.Price <= filter.PriceHigh))
+            .Where(o => (filter.PriceLow == null || o.Price >= filter.PriceLow) &&
+                        (filter.PriceHigh == null || o.Price <= filter.PriceHigh))
             .ToListAsync();
 
         return offers;
@@ -70,11 +71,13 @@ public class OfferRepository : IOfferRepository
 
     public async Task DeleteAllClientOffersAsync(DeleteAllClientOffersDTO clientDto)
     {
-        Guid? clientId = await _dbContext.Clients.Include(c => c.AppUser)
+        Guid? clientId = await _dbContext.Clients
+            .Include(c => c.AppUser)
             .Where(c => c.AppUser.Email == clientDto.Email)
-            .Select(c => c.Id).FirstOrDefaultAsync();
+            .Select(c => c.Id)
+            .FirstOrDefaultAsync();
 
-        if (clientId is null)
+        if (clientId == Guid.Empty)
         {
             return;
         }
