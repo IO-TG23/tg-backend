@@ -3,7 +3,6 @@ using TG.Backend.Features.Offer.EditOffer;
 using TG.Backend.Features.Offer.Validation;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
-
 namespace TG.Backend.Tests.ValidatorTests.Offer;
 
 public class EditOfferDTOValidatorTests
@@ -60,7 +59,7 @@ public class EditOfferDTOValidatorTests
                     FrontWheelTrack = 1,
                     Gearbox = "Automatic",
                     Drive = "FWD",
-                    ClientId = Guid.Empty
+                    ClientId = default
                 },
                 Description = "desc",
                 ContactEmail = "test@test.com",
@@ -102,7 +101,7 @@ public class EditOfferDTOValidatorTests
                         FrontWheelTrack = 0,
                         Gearbox = null,
                         Drive = null,
-                        ClientId = Guid.Empty
+                        ClientId = default
                     },
                     Price = 0,
                     Description = null,

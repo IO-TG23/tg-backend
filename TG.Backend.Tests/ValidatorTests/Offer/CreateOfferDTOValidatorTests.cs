@@ -3,7 +3,6 @@ using TG.Backend.Features.Offer.CreateOffer;
 using TG.Backend.Features.Offer.Validation;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
-
 namespace TG.Backend.Tests.ValidatorTests.Offer;
 
 public class CreateOfferDTOValidatorTests
@@ -368,7 +367,7 @@ public class CreateOfferDTOValidatorTests
                 FrontWheelTrack = 150,
                 Gearbox = "Automatic",
                 Drive = "FWD",
-                ClientId = Guid.Empty
+                ClientId = default
             },
             Price = 1500,
             Description = "Description",
