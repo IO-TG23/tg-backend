@@ -25,7 +25,7 @@ jobs:
       with:
         files: '**/appsettings.json'
       env:
-        ConnectionStrings.TestConn: '${{ env.TestConn }}'
+        ConnectionStrings.TestConn: '${{ env.TESTCONN }}'
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
