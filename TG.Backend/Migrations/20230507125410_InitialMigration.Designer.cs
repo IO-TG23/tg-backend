@@ -12,8 +12,8 @@ using TG.Backend.Data;
 namespace TG.Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230430191333_CreateRelationBetweenOfferAndBlob")]
-    partial class CreateRelationBetweenOfferAndBlob
+    [Migration("20230507125410_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,7 +23,7 @@ namespace TG.Backend.Migrations
                 .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -57,7 +57,7 @@ namespace TG.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -82,7 +82,7 @@ namespace TG.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -177,6 +177,20 @@ namespace TG.Backend.Migrations
                     b.ToTable("Blobs");
                 });
 
+            modelBuilder.Entity("TG.Backend.Data.Client", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("TG.Backend.Data.Offer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -222,6 +236,9 @@ namespace TG.Backend.Migrations
                     b.Property<decimal>("BootCapacity")
                         .HasColumnType("numeric");
 
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -265,6 +282,8 @@ namespace TG.Backend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClientId");
+
                     b.ToTable("Vehicles");
                 });
 
@@ -275,6 +294,9 @@ namespace TG.Backend.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
+
+                    b.Property<Guid?>("ClientId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -321,6 +343,9 @@ namespace TG.Backend.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -401,6 +426,34 @@ namespace TG.Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("TG.Backend.Data.Vehicle", b =>
+                {
+                    b.HasOne("TG.Backend.Data.Client", "Client")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("TG.Backend.Models.Auth.AppUser", b =>
+                {
+                    b.HasOne("TG.Backend.Data.Client", "Client")
+                        .WithOne("AppUser")
+                        .HasForeignKey("TG.Backend.Models.Auth.AppUser", "ClientId");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("TG.Backend.Data.Client", b =>
+                {
+                    b.Navigation("AppUser")
+                        .IsRequired();
+
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("TG.Backend.Data.Offer", b =>

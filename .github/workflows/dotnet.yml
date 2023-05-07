@@ -26,6 +26,9 @@ jobs:
         files: '**/appsettings.json'
       env:
         ConnectionStrings.TestConn: '${{ secrets.TESTCONN }}'
+        Jwt.Issuer: 'value'
+        Jwt.Audience: 'value'
+        Jwt.Key: 'valuevaluevalue123valuevalue123456789'
     - name: Restore dependencies
       run: dotnet restore
     - name: Build

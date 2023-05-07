@@ -1,9 +1,9 @@
 version: '3'
 services:
   db:
-    image: postgres:11
+    image: postgres:9.6
     ports:
-      - "5432:5432"
+      - "5438:5432"
     environment:
       - POSTGRES_PASSWORD=max123456
     networks:
