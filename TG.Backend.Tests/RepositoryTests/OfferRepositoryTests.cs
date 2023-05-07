@@ -8,7 +8,6 @@ using TG.Backend.Models.Auth;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
 using TG.Backend.Repositories.Offer;
-
 namespace TG.Backend.Tests.RepositoryTests;
 
 public class OfferRepositoryTests

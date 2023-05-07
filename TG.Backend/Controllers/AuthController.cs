@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TG.Backend.Features.Misc.Command;
 using TG.Backend.Filters;
+using TG.Backend.Models;
 
 namespace TG.Backend.Controllers
 {
@@ -144,6 +146,19 @@ namespace TG.Backend.Controllers
                 { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
                 _ => BadRequest()
             };
+        }
+
+        [HttpPost("verifyJwtToken")]
+        public async Task<IActionResult> VerifyJwtToken([FromBody] JwtTokenVerification Token)
+        {
+            bool res = await _sender.Send(new VerifyJWTQuery(Token));
+
+            if (res)
+            {
+                return Ok();
+            }
+
+            return Unauthorized();
         }
     }
 }

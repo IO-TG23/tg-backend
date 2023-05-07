@@ -1,12 +1,11 @@
-using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using TG.Backend.Data;
 using TG.Backend.Models.Auth;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
-
 namespace TG.Backend.Tests.ControllerTests;
 
 [Collection("SharedApi")]
@@ -240,7 +239,7 @@ public class OfferControllerTests : IAsyncLifetime
         // assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
-    
+
     public static Offer GetValidOffer(Guid clientId)
     {
         return new Offer
@@ -334,7 +333,7 @@ public class OfferControllerTests : IAsyncLifetime
 
         return Guid.Parse(appUser.Id);
     }
-    
+
     public Task InitializeAsync() => Task.CompletedTask;
 
     // clean tables after each test

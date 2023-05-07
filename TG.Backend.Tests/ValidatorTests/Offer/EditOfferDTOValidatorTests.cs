@@ -3,7 +3,6 @@ using TG.Backend.Features.Offer.EditOffer;
 using TG.Backend.Features.Offer.Validation;
 using TG.Backend.Models.Offer;
 using TG.Backend.Models.Vehicle;
-
 namespace TG.Backend.Tests.ValidatorTests.Offer;
 
 public class EditOfferDTOValidatorTests
@@ -13,7 +12,7 @@ public class EditOfferDTOValidatorTests
     {
         public EditOfferDTO EditOfferDto { get; set; }
         public Guid Id { get; set; }
-        
+
         public EditOfferDtoWithId(EditOfferDTO editOfferDto, Guid id)
         {
             EditOfferDto = editOfferDto;
