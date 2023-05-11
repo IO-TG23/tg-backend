@@ -6,6 +6,7 @@ using TG.Backend.Features.Offer.CreateOffer;
 using TG.Backend.Features.Offer.DeleteAllClientOffers;
 using TG.Backend.Features.Offer.DeleteOffer;
 using TG.Backend.Features.Offer.EditOffer;
+using TG.Backend.Features.Offer.ExportInformation;
 using TG.Backend.Features.Offer.GetOfferById;
 using TG.Backend.Features.Offer.GetOffers;
 using TG.Backend.Filters;
@@ -49,7 +50,7 @@ public class OfferController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> CreateOffer([FromBody] CreateOfferDTO createOfferDto)
     {
         var createOfferResponse = await _sender.Send(new CreateOfferCommand(createOfferDto));
@@ -107,6 +108,17 @@ public class OfferController : ControllerBase
         if (editOfferResponse is { IsSuccess: true, StatusCode: HttpStatusCode.NoContent })
             return NoContent();
 
+        return StatusCode(StatusCodes.Status503ServiceUnavailable);
+    }
+
+    [HttpPost("export/{id:Guid}")]
+    public async Task<IActionResult> ExportInformation([FromRoute] Guid id, [FromBody] string email)
+    {
+        var exportInformationResponse = await _sender.Send(new ExportInformationQuery(id, email));
+
+        if (exportInformationResponse is { IsSuccess: true, StatusCode: HttpStatusCode.OK })
+            return Ok();
+        
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 }

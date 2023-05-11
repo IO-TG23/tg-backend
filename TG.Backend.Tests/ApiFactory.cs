@@ -43,11 +43,12 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
             // replace default dbcontext with test context
             services.AddDbContext<AppDbContext>(op =>
-                op.UseNpgsql(configuration.GetConnectionString("TestConn")));
-            
+                op.UseNpgsql(configuration.GetConnectionString("TestConn"),
+                    pgOpts => { pgOpts.SetPostgresVersion(new Version("9.6")); }));
+
             // replace default BlobServiceClient
             services.AddScoped(x => GetBlobServiceClientMock().Object);
-            
+
             // setup fake authentication and authorization
             services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
             services.AddMvc(options => options.Filters.Add(new FakeUserFilter()));
@@ -133,13 +134,13 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             objectReplicationDestinationPolicy: "object-replication-policy",
             hasLegalHold: true,
             createdOn: DateTimeOffset.Now.AddDays(-7)));
-        
+
         var file = File.OpenRead("../../../2cde3011-2f06-485d-86ac-30575af5519c");
-        
+
         blobResponseDownloadResultMock
             .Setup(b => b.Value)
             .Returns(blobDownloadResult);
-        
+
         blobClientMock
             .Setup(b => b.OpenReadAsync(It.IsAny<long>(), It.IsAny<int?>(), It.IsAny<BlobRequestConditions>(),
                 It.IsAny<CancellationToken>()))
@@ -148,11 +149,11 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         blobClientMock
             .Setup(b => b.DownloadContentAsync())
             .ReturnsAsync(blobResponseDownloadResultMock.Object);
-        
+
         blobContainerClientMock
             .Setup(b => b.GetBlobClient(It.IsAny<string>()))
             .Returns(blobClientMock.Object);
-        
+
         blobServiceClientMock
             .Setup(b => b.GetBlobContainerClient(It.IsAny<string>()))
             .Returns(blobContainerClientMock.Object);
