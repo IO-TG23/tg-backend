@@ -40,9 +40,9 @@ namespace TG.Backend.Features.Handler
             }
 
             SignInResult loginRes = await _signInManager.PasswordSignInAsync(user, request.AppUser.Password, false, true);
-            bool valid2FACode = _authenticator.ValidateTwoFactorPIN(_configuration["2FA:Key"], request.AppUser.Code);
+            bool validTFACode = _authenticator.ValidateTwoFactorPIN(_configuration["TFA:Key"], request.AppUser.Code);
 
-            if (!loginRes.Succeeded || loginRes.IsLockedOut || !valid2FACode)
+            if (!loginRes.Succeeded || loginRes.IsLockedOut || !validTFACode)
             {
                 return new()
                 {
