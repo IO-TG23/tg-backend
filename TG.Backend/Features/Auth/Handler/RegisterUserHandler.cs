@@ -57,7 +57,7 @@ namespace TG.Backend.Features.Handler
             //TODO - wiadomosc mailowa - wyglad
             await _sender.SendEmailAsync(user.Email, "Potwierdz adres email", token);
 
-            SetupCode setupInfo = _authenticator.GenerateSetupCode(_configuration["2FA:Issuer"], user.Email, _configuration["2FA:Key"], false);
+            SetupCode setupInfo = _authenticator.GenerateSetupCode(_configuration["TFA:Issuer"], user.Email, _configuration["TFA:Key"], false);
             string qrCode = setupInfo.QrCodeSetupImageUrl;
 
             await _clientRepository.CreateClient(new CreateClientDTO() { AppUserId = Guid.Parse(user.Id), AppUser = user });
