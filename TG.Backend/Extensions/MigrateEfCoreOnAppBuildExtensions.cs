@@ -9,7 +9,11 @@
         {
             await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
             await using AppDbContext? db = scope.ServiceProvider.GetService<AppDbContext>();
-            await db!.Database.MigrateAsync();
+
+            if (!db?.Database.GetAppliedMigrations().Any() ?? true)
+            {
+                await db!.Database.MigrateAsync();
+            }
         }
     }
 }

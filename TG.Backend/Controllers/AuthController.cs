@@ -11,10 +11,12 @@ namespace TG.Backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ISender _sender;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(ISender sender)
+        public AuthController(ISender sender, IConfiguration configuration)
         {
             _sender = sender;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -106,15 +108,15 @@ namespace TG.Backend.Controllers
             };
         }
 
-        [HttpPost("confirmAccount")]
-        public async Task<IActionResult> ConfirmAccount([FromBody] AppUserConfirmAccountDTO appUser)
+        [HttpGet("confirmAccount")]
+        public async Task<IActionResult> ConfirmAccount([FromQuery] AppUserConfirmAccountDTO appUser)
         {
             AuthResponseModel resp = await _sender.Send(new ConfirmAccountCommand(appUser.Token, appUser.Email));
 
             return resp switch
             {
                 { IsSuccess: false, StatusCode: HttpStatusCode.Unauthorized } => Unauthorized(new { resp.Messages }),
-                { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => NoContent(),
+                { IsSuccess: true, StatusCode: HttpStatusCode.NoContent } => Redirect(_configuration["ApplicationFrontend"]!),
                 _ => BadRequest()
             };
         }
