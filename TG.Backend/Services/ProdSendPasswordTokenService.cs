@@ -11,9 +11,9 @@ namespace TG.Backend.Services
             _sender = sender;
         }
 
-        public async Task SendToken(AppUser user, string token)
+        public async Task SendToken(AppUser user, string message)
         {
-            await _sender.SendEmailAsync(user.Email, "Your account token", token);
+            await _sender.SendEmailAsync(user.Email, "Your account token", message);
         }
     }
 }

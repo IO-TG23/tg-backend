@@ -80,9 +80,9 @@ namespace TG.Backend.Controllers
             };
         }
 
-        [HttpPost("resetPassword")]
+        [HttpGet("resetPassword")]
         [ServiceFilter(typeof(ValidateAccountNotLockedFilter))]
-        public async Task<IActionResult> ResetPassword([FromBody] AppUserResetPasswordDTO appUser)
+        public async Task<IActionResult> ResetPassword([FromQuery] AppUserResetPasswordDTO appUser)
         {
             AuthResponseModel resp = await _sender.Send(new ResetPasswordCommand(appUser));
 
