@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Google.Authenticator;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Web;
 using TG.Backend.Models.Client;
 using TG.Backend.Repositories.Client;
 
@@ -55,7 +56,9 @@ namespace TG.Backend.Features.Handler
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
             //TODO - wiadomosc mailowa - wyglad
-            await _sender.SendEmailAsync(user.Email, "Potwierdz adres email", token);
+            string emailMessage = $"<div>Potwierdź swój email klikając w poniższy link: <a href='{_configuration["ApplicationBaseAddress"]}/auth/confirmAccount?email={user.Email}&token={HttpUtility.UrlEncode(token)}'>Potwierdź mail</a> <br /><br /></div>";
+
+            await _sender.SendEmailAsync(user.Email, "Potwierdz adres email", emailMessage);
 
             SetupCode setupInfo = _authenticator.GenerateSetupCode(_configuration["TFA:Issuer"], user.Email, _configuration["TFA:Key"], false);
             string qrCode = setupInfo.QrCodeSetupImageUrl;

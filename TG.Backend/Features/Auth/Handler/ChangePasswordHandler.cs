@@ -1,4 +1,6 @@
-﻿namespace TG.Backend.Features.Handler
+﻿using System.Web;
+
+namespace TG.Backend.Features.Handler
 {
     public class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand, AuthResponseModel>
     {
@@ -23,7 +25,7 @@
                 };
             }
 
-            IdentityResult res = await _userManager.ResetPasswordAsync(user, request.AppUser.Token, request.AppUser.NewPassword);
+            IdentityResult res = await _userManager.ResetPasswordAsync(user, HttpUtility.UrlDecode(request.AppUser.Token), request.AppUser.NewPassword);
 
             if (!res.Succeeded)
             {

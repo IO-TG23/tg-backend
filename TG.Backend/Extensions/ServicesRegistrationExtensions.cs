@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Text;
 using TG.Backend.Data.SSE;
 using TG.Backend.Email;
@@ -96,10 +97,16 @@ namespace TG.Backend.Extensions
             }
             else
             {
+                services
+                    .AddFluentEmail(builder.Configuration["Mailing:Email"])
+                    .AddSmtpSender(new SmtpClient("poczta.interia.pl")
+                    {
+                        EnableSsl = true,
+                        Port = 587,
+                        Credentials = new NetworkCredential(builder.Configuration["Mailing:Email"], builder.Configuration["Mailing:Password"])
+                    });
                 services.AddScoped<IEmailSender, FluentEmailSender>();
-
-                //IMPORTANT!! TO DELETE LATER ONE - WHEN PROPER SEND TOKEN SERVICE 
-                services.AddScoped<ISendPasswordTokenService, DevSendPasswordTokenService>();
+                services.AddScoped<ISendPasswordTokenService, ProdSendPasswordTokenService>();
 
             }
 

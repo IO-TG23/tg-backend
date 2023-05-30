@@ -2,6 +2,6 @@
 {
     public interface ISendPasswordTokenService
     {
-        Task SendToken(AppUser user, string token);
+        Task SendToken(AppUser user, string message);
     }
 }
