@@ -92,7 +92,7 @@ namespace TG.Backend.Extensions
 
             services
                 .AddFluentEmail(builder.Configuration["Mailing:Email"])
-                .AddSmtpSender(new SmtpClient("poczta.interia.pl")
+                .AddSmtpSender(new SmtpClient(builder.Configuration["Mailing:Host"])
                 {
                     EnableSsl = true,
                     Port = 587,
