@@ -23,7 +23,5 @@ public class ErrorHandlingMiddleware : IMiddleware
         //    context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
         //    await context.Response.WriteAsync(exception.Message);
         //}
-
-        return Task.CompletedTask;
     }
 }
