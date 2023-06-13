@@ -1,4 +1,5 @@
-﻿using TG.Backend.Services;
+﻿using System.Web;
+using TG.Backend.Services;
 
 namespace TG.Backend.Features.Handler
 {
@@ -6,11 +7,14 @@ namespace TG.Backend.Features.Handler
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ISendPasswordTokenService _sendPasswordTokenService;
+        private readonly IConfiguration _configuration;
 
-        public ResetPasswordHandler(UserManager<AppUser> userManager, ISendPasswordTokenService sendPasswordTokenService)
+        public ResetPasswordHandler(UserManager<AppUser> userManager, ISendPasswordTokenService sendPasswordTokenService,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _sendPasswordTokenService = sendPasswordTokenService;
+            _configuration = configuration;
         }
 
         public async Task<AuthResponseModel> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
@@ -29,7 +33,9 @@ namespace TG.Backend.Features.Handler
 
             string token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            await _sendPasswordTokenService.SendToken(user, token);
+            string emailMessage = $"<div>Twój token resetujący hasło: <b>{HttpUtility.UrlEncode(token)}</b> <br /><br /></div>";
+
+            await _sendPasswordTokenService.SendToken(user, emailMessage);
 
             return new()
             {

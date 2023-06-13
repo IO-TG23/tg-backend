@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: postgres:9.6
+    image: postgres:11
     ports:
       - "5438:5432"
     environment:
@@ -9,8 +9,7 @@ services:
     networks:
       - app_network
   app:
-    image: iotg23/tg-backend
-    pull_policy: if_not_present
+    image: iotg23/tg-backend:deploy
     depends_on:
       - db
     ports:
