@@ -90,25 +90,18 @@ namespace TG.Backend.Extensions
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddTransient<IBlobRepository, BlobRepository>();
 
-            if (!builder.Environment.IsProduction())
-            {
-                services.AddScoped<IEmailSender, DevEmailSender>();
-                services.AddScoped<ISendPasswordTokenService, DevSendPasswordTokenService>();
-            }
-            else
-            {
-                services
-                    .AddFluentEmail(builder.Configuration["Mailing:Email"])
-                    .AddSmtpSender(new SmtpClient("poczta.interia.pl")
-                    {
-                        EnableSsl = true,
-                        Port = 587,
-                        Credentials = new NetworkCredential(builder.Configuration["Mailing:Email"], builder.Configuration["Mailing:Password"])
-                    });
-                services.AddScoped<IEmailSender, FluentEmailSender>();
-                services.AddScoped<ISendPasswordTokenService, ProdSendPasswordTokenService>();
+            services
+                .AddFluentEmail(builder.Configuration["Mailing:Email"])
+                .AddSmtpSender(new SmtpClient(builder.Configuration["Mailing:Host"])
+                {
+                    EnableSsl = true,
+                    Port = 587,
+                    Credentials = new NetworkCredential(builder.Configuration["Mailing:Email"], builder.Configuration["Mailing:Password"])
+                });
+            services.AddScoped<IEmailSender, FluentEmailSender>();
+            services.AddScoped<ISendPasswordTokenService, ProdSendPasswordTokenService>();
 
-            }
+
 
             builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
             builder.Services.AddScoped(x =>
