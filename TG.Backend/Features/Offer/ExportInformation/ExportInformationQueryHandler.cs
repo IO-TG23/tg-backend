@@ -36,7 +36,7 @@ public class ExportInformationQueryHandler : IRequestHandler<ExportInformationQu
         // TO DO
         // musimy uściślić jak to wysyłamy bo nie wiem czy to ma być HTML czy co
         // i trzeba link ustalic skoro go chcemy wyslac w kodzie qr
-        await _emailSender.SendEmailAsync(request.Email, $"{offer.Vehicle.Name} - Tanie Graty", $"data:image/png;base64,{Convert.ToBase64String(qrCodeImage)}");
+        await _emailSender.SendEmailAsync(request.Email, $"{offer.Vehicle.Name} - Tanie Graty", $"<img src='data:image/png;base64,{Convert.ToBase64String(qrCodeImage)}' />");
 
         return new OfferResponse
         {

@@ -112,13 +112,13 @@ public class OfferController : ControllerBase
     }
 
     [HttpPost("export/{id:Guid}")]
-    public async Task<IActionResult> ExportInformation([FromRoute] Guid id, [FromBody] string email)
+    public async Task<IActionResult> ExportInformation([FromRoute] Guid id, [FromBody] ExportModelBody email)
     {
-        var exportInformationResponse = await _sender.Send(new ExportInformationQuery(id, email));
+        var exportInformationResponse = await _sender.Send(new ExportInformationQuery(id, email.Email));
 
         if (exportInformationResponse is { IsSuccess: true, StatusCode: HttpStatusCode.OK })
             return Ok();
-        
+
         return StatusCode(StatusCodes.Status503ServiceUnavailable);
     }
 }
