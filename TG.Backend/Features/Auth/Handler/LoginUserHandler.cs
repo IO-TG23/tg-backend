@@ -13,16 +13,18 @@ namespace TG.Backend.Features.Handler
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly TwoFactorAuthenticator _authenticator;
+        private readonly AppDbContext _ctx;
 
         public LoginUserHandler(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
             RoleManager<IdentityRole> roleManager, IConfiguration configuration,
-            TwoFactorAuthenticator authenticator)
+            TwoFactorAuthenticator authenticator, AppDbContext ctx)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _configuration = configuration;
             _authenticator = authenticator;
+            _ctx = ctx;
         }
 
         public async Task<AuthResponseModel> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -56,9 +58,12 @@ namespace TG.Backend.Features.Handler
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            var client = await _ctx.Clients.FirstOrDefaultAsync(c => c.AppUserId == Guid.Parse(user.Id));
+
             List<Claim> claims = new()
             {
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("ClientId",client?.Id.ToString())
             };
 
             List<Claim> userClaims = await GetClaims(user);

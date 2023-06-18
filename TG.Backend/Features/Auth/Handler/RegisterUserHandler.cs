@@ -48,14 +48,12 @@ namespace TG.Backend.Features.Handler
                 };
             }
 
-            //TODO - do przeniesienia
             await CreateRoles();
 
             await _userManager.AddToRoleAsync(user, "Client");
 
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            //TODO - wiadomosc mailowa - wyglad
             string emailMessage = $"<div>Potwierdź swój email klikając w poniższy link: <a href='{_configuration["ApplicationBaseAddress"]}/auth/confirmAccount?email={user.Email}&token={HttpUtility.UrlEncode(token)}'>Potwierdź mail</a> <br /><br /></div>";
 
             await _sender.SendEmailAsync(user.Email, "Potwierdz adres email", emailMessage);
@@ -74,7 +72,7 @@ namespace TG.Backend.Features.Handler
         }
 
         /// <summary>
-        /// Pomocnicza metoda tworzaca role - do przeniesienia
+        /// Pomocnicza metoda tworzaca role
         /// </summary>
         /// <returns></returns>
         private async Task CreateRoles()
