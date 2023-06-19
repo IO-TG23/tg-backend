@@ -1,12 +1,16 @@
-﻿namespace TG.Backend.Features.Handler
+﻿using TG.Backend.Repositories.Client;
+
+namespace TG.Backend.Features.Handler
 {
     public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, AuthResponseModel>
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IClientRepository _clientRepository;
 
-        public DeleteUserHandler(UserManager<AppUser> userManager)
+        public DeleteUserHandler(UserManager<AppUser> userManager, IClientRepository clientRepository)
         {
             _userManager = userManager;
+            _clientRepository = clientRepository;
         }
 
         public async Task<AuthResponseModel> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
@@ -24,6 +28,10 @@
             }
 
             IdentityResult res = await _userManager.DeleteAsync(user);
+
+            Guid clientId = (Guid)user.ClientId!;
+
+            await _clientRepository.DeleteClient(new Models.Client.DeleteClientDTO() { Id = clientId });
 
             if (!res.Succeeded)
             {

@@ -17,7 +17,8 @@ public class DetailedOfferDTO
     public required decimal Height { get; set; }
     public required decimal Width { get; set; }
     public required decimal WheelBase { get; set; }
-    public required  decimal BackWheelTrack { get; set; }
+    public required decimal BackWheelTrack { get; set; }
     public required decimal FrontWheelTrack { get; set; }
+    public Guid ClientId { get; set; }
     public IEnumerable<Guid> BlobIds { get; set; } = new List<Guid>();
 }
