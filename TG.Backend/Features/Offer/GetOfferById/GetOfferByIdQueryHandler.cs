@@ -42,7 +42,8 @@ public class GetOfferByIdQueryHandler : IRequestHandler<GetOfferByIdQuery, Offer
                 NumberOfDoors = offer.Vehicle.NumberOfDoors,
                 NumberOfSeats = offer.Vehicle.NumberOfSeats,
                 OfferDescription = offer.Description,
-                BlobIds = offer.Blobs.Select(b => b.Id)
+                BlobIds = offer.Blobs.Select(b => b.Id),
+                ClientId = offer.Vehicle.ClientId
             }
         };
     }
