@@ -49,7 +49,7 @@ namespace TG.Backend.Controllers
 
         [HttpDelete("delete")]
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
-        public async Task<IActionResult> Delete([FromBody] AppUserDeleteDTO appUser)
+        public async Task<IActionResult> Delete([FromQuery] AppUserDeleteDTO appUser)
         {
             AuthResponseModel resp = await _sender.Send(new DeleteUserCommand(appUser));
 
