@@ -63,7 +63,8 @@ namespace TG.Backend.Extensions
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.FromSeconds(15)
                 };
             });
 
@@ -95,7 +96,7 @@ namespace TG.Backend.Extensions
                 .AddSmtpSender(new SmtpClient(builder.Configuration["Mailing:Host"])
                 {
                     EnableSsl = true,
-                    Port = 587,
+                    Port = int.Parse(builder.Configuration["Mailing:Port"]),
                     Credentials = new NetworkCredential(builder.Configuration["Mailing:Email"], builder.Configuration["Mailing:Password"])
                 });
             services.AddScoped<IEmailSender, FluentEmailSender>();

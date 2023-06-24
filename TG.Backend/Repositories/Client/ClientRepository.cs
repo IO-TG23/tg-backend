@@ -50,6 +50,17 @@ namespace TG.Backend.Repositories.Client
                 return false;
             }
 
+            AppUser? user = _ctx.Users.FirstOrDefault(c => c.ClientId == dto.Id);
+
+            if (user is not null)
+            {
+                user.Client = null;
+                user.ClientId = null;
+
+                await _ctx.SaveChangesAsync();
+            }
+
+
             _ctx.Clients.Remove(c);
 
             await _ctx.SaveChangesAsync();
