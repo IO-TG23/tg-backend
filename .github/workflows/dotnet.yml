@@ -29,6 +29,7 @@ jobs:
         Jwt.Issuer: 'value'
         Jwt.Audience: 'value'
         Jwt.Key: 'valuevaluevalue123valuevalue123456789'
+        Mailing.Port: '587'
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
